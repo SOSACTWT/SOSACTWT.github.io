@@ -284,7 +284,7 @@ input::placeholder {
   z-index: -999;
   width: 100%;
   height: 100%;
-  background: ;
+  background: url(/img/齐天大圣1.jpg);
   background-attachment: local;
   background-position: center;
   -webkit-background-size: cover;
@@ -529,6 +529,13 @@ canvas:not(#ribbon-canvas),
   -o-animation: scroll-down-effect 1.5s infinite;
   -ms-animation: scroll-down-effect 1.5s infinite;
   animation: scroll-down-effect 1.5s infinite;
+}
+.avatar-img {
+  -webkit-animation: avatar_turn_around 2s linear infinite;
+  -moz-animation: avatar_turn_around 2s linear infinite;
+  -o-animation: avatar_turn_around 2s linear infinite;
+  -ms-animation: avatar_turn_around 2s linear infinite;
+  animation: avatar_turn_around 2s linear infinite;
 }
 .reward-main {
   -webkit-animation: donate_effcet 0.3s 0.1s ease both;
@@ -2284,7 +2291,12 @@ blockquote footer cite:before {
 }
 @media screen and (min-width: 900px) {
   #aside_content .card-widget {
-    margin-left: 15px;
+    margin-right: 15px;
+  }
+}
+@media screen and (max-width: 768px) {
+  #aside_content {
+    display: none;
   }
 }
 .category-content ul {
@@ -2539,7 +2551,7 @@ blockquote footer cite:before {
 #page-header {
   position: relative;
   width: 100%;
-  background-color: #49b1f5;
+  background-color: #293a43;
   background-attachment: scroll;
   background-position: center center;
   -webkit-background-size: cover;
@@ -3856,6 +3868,22 @@ _:future,
   }
   #recent-posts .recent-post-item .recent-post-info .content {
     height: auto;
+  }
+}
+@media screen and (min-width: 900px) {
+  #recent-posts,
+  #page,
+  .category-content,
+  #archive,
+  .tag-cloud,
+  #tag,
+  #category {
+    -webkit-box-ordinal-group: 2;
+    -moz-box-ordinal-group: 2;
+    -o-box-ordinal-group: 2;
+    -ms-flex-order: 2;
+    -webkit-order: 2;
+    order: 2;
   }
 }
 @media screen and (max-width: 900px) {
