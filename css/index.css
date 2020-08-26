@@ -2650,7 +2650,7 @@ blockquote footer cite:before {
   }
 }
 #page-header.post-bg {
-  height: 20rem;
+  height: 50rem;
 }
 @media screen and (max-width: 768px) {
   #page-header.post-bg {
@@ -5613,9 +5613,8 @@ blockquote.pullquote.right {
 }
 .read-mode #page-header.post-bg {
   background-color: transparent;
-  background-image: https;
+  background-image: none !important;
 }
-.read-mode #page-header.post-bg :,
 .read-mode #page-header.post-bg:before {
   opacity: 0;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
