@@ -2664,7 +2664,7 @@ blockquote footer cite:before {
   display: block;
   width: 100%;
   height: 100%;
-  background-color: #fff;
+  background-color: rgba(255,255,255,0.3);
   content: '';
 }
 #page-header.post-bg #post-info {
@@ -2682,7 +2682,7 @@ blockquote footer cite:before {
 }
 #page-header.post-bg #post-info #post-title {
   margin-bottom: 0.4rem;
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 @media screen and (max-width: 768px) {
   #page-header.post-bg #post-info #post-title {
@@ -2690,7 +2690,7 @@ blockquote footer cite:before {
   }
 }
 #page-header.post-bg #post-info #post-title .posttitle {
-  color: var(--dark);
+  color: var(--light-grey);
   line-height: 1.5;
   -webkit-line-clamp: 3;
 }
