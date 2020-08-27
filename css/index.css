@@ -2669,10 +2669,10 @@ blockquote footer cite:before {
 }
 #page-header.post-bg #post-info {
   position: absolute;
-  bottom: 10rem;
+  bottom: 1.5rem;
   padding: 0 8%;
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 @media screen and (max-width: 768px) {
   #page-header.post-bg #post-info {
@@ -2682,7 +2682,7 @@ blockquote footer cite:before {
 }
 #page-header.post-bg #post-info #post-title {
   margin-bottom: 0.4rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 @media screen and (max-width: 768px) {
   #page-header.post-bg #post-info #post-title {
