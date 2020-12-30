@@ -1,0 +1,793 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>aima中的一些点 | 江城子</title><meta name="description" content="❤️：文中可能会看到一些莫名的”*”，这是本地markdown转到博客里来有些地方转换的有问题，忽略即可，不影响阅读。 🧠经典的搜索算法搜索搜索问题的定义为达目标，寻找从初始状态到目标状态的行动序列的过程被称为搜索。 搜索算法输入的是问题，输出的是问题的解，问题的解以行动序列的形式返回。 搜索算法要做的就是生成后继并区分目标状态与非目标状态，这些搜索策略是以节点扩展的次序来分类的。 能知道一个非"><meta name="keywords" content="aima,搜索算法"><meta name="author" content="江城子"><meta name="copyright" content="江城子"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/avatar.jpg"><link rel="canonical" href="http://yoursite.com/2020/10/30/aima/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;}}"/><meta property="og:type" content="article"><meta property="og:title" content="aima中的一些点"><meta property="og:url" content="http://yoursite.com/2020/10/30/aima/"><meta property="og:site_name" content="江城子"><meta property="og:description" content="❤️：文中可能会看到一些莫名的”*”，这是本地markdown转到博客里来有些地方转换的有问题，忽略即可，不影响阅读。 🧠经典的搜索算法搜索搜索问题的定义为达目标，寻找从初始状态到目标状态的行动序列的过程被称为搜索。 搜索算法输入的是问题，输出的是问题的解，问题的解以行动序列的形式返回。 搜索算法要做的就是生成后继并区分目标状态与非目标状态，这些搜索策略是以节点扩展的次序来分类的。 能知道一个非"><meta property="og:image" content="http://yoursite.com/2020/10/30/aima/cover.jpg"><meta property="article:published_time" content="2020-10-30T07:18:36.000Z"><meta property="article:modified_time" content="2020-12-30T09:24:18.257Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.2',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-12-30 17:24:18'
+}</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 5.0.2"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">11</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">17</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 基地</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%A7%A0%E7%BB%8F%E5%85%B8%E7%9A%84%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95%E6%90%9C%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text">🧠经典的搜索算法搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">搜索问题的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%97%A0%E4%BF%A1%E6%81%AF%E6%90%9C%E7%B4%A2%EF%BC%88%E7%9B%B2%E7%9B%AE%E6%90%9C%E7%B4%A2%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">1.无信息搜索（盲目搜索）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1%E5%AE%BD%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2-%EF%BC%88%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2-breadth-first-search-BFS"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1宽度优先搜索 （广度优先搜索,breadth-first search,BFS)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%EF%BC%9A"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">算法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">实现：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%EF%BC%9A"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">性能：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%8C%E5%A4%87%E6%80%A7%EF%BC%9A%E2%9C%85%EF%BC%88%E5%81%87%E8%AE%BE%E5%88%86%E6%94%AF%E5%9B%A0%E5%AD%90b%E6%98%AF%E6%9C%89%E9%99%90%E7%9A%84%EF%BC%89%E3%80%82"><span class="toc-number">1.2.1.3.1.</span> <span class="toc-text">完备性：✅（假设分支因子b是有限的）。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E4%BC%98%E6%80%A7%EF%BC%9A"><span class="toc-number">1.2.1.3.2.</span> <span class="toc-text">最优性：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%92%8C%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">1.2.1.3.3.</span> <span class="toc-text">时间和空间复杂度：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E4%B8%80%E8%87%B4%E4%BB%A3%E4%BB%B7%E6%90%9C%E7%B4%A2%EF%BC%88uniform-cost-search%EF%BC%8CUCS%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 一致代价搜索（uniform-cost search，UCS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A%EF%BC%9A"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">解释：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%EF%BC%9A-1"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">算法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%EF%BC%9A-1"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">实现：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%EF%BC%9A-1"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">性能：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%8C%E5%A4%87%E6%80%A7%EF%BC%9A"><span class="toc-number">1.2.2.4.1.</span> <span class="toc-text">完备性：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E4%BC%98%E6%80%A7%EF%BC%9A-1"><span class="toc-number">1.2.2.4.2.</span> <span class="toc-text">最优性：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E3%80%81%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">1.2.2.4.3.</span> <span class="toc-text">时间复杂度、空间复杂度：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2%EF%BC%88deepth-first-search-DFS%EF%BC%89"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 深度优先搜索（deepth-first search,DFS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%EF%BC%9A-2"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">算法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%EF%BC%9A-2"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">实现：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%EF%BC%9A-2"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">性能：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%8C%E5%A4%87%E6%80%A7%EF%BC%9A-1"><span class="toc-number">1.2.3.3.1.</span> <span class="toc-text">完备性：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E4%BC%98%E6%80%A7%EF%BC%9A-2"><span class="toc-number">1.2.3.3.2.</span> <span class="toc-text">最优性：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E3%80%81%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A-1"><span class="toc-number">1.2.3.3.3.</span> <span class="toc-text">时间复杂度、空间复杂度：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E6%B7%B1%E5%BA%A6%E5%8F%97%E9%99%90%E6%90%9C%E7%B4%A2%EF%BC%88depth-limited-search%EF%BC%89"><span class="toc-number">1.2.4.</span> <span class="toc-text">1.4 深度受限搜索（depth-limited search）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E8%BF%AD%E4%BB%A3%E5%8A%A0%E6%B7%B1%E7%9A%84%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E7%AE%97%E6%B3%95%EF%BC%88iterative-deepening-search%EF%BC%8CIDS%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">1.5 迭代加深的深度优先算法（iterative deepening search，IDS）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A%EF%BC%9A-1"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">解释：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%EF%BC%9A-3"><span class="toc-number">1.2.5.2.</span> <span class="toc-text">算法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E5%A4%87%E6%80%A7%E4%B8%8E%E6%9C%80%E4%BC%98%E6%80%A7%EF%BC%9A"><span class="toc-number">1.2.5.3.</span> <span class="toc-text">完备性与最优性：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">1.2.5.4.</span> <span class="toc-text">时间与空间复杂度：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-%E5%8F%8C%E5%90%91%E6%90%9C%E7%B4%A2"><span class="toc-number">1.2.6.</span> <span class="toc-text">1.6 双向搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A%EF%BC%9A-2"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">解释：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%EF%BC%9A-4"><span class="toc-number">1.2.6.2.</span> <span class="toc-text">算法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-%E6%97%A0%E4%BF%A1%E6%81%AF%E6%90%9C%E7%B4%A2%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95%E7%9A%84%E4%B8%80%E4%BA%9B%E7%BB%93%E8%AE%BA%EF%BC%9A"><span class="toc-number">1.2.7.</span> <span class="toc-text">1.7 无信息搜索基本算法的一些结论：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9C%89%E4%BF%A1%E6%81%AF%E6%90%9C%E7%B4%A2%EF%BC%88%E5%90%AF%E5%8F%91%E5%BC%8F%E6%90%9C%E7%B4%A2%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">2 有信息搜索（启发式搜索）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E8%B4%AA%E5%A9%AA%E6%9C%80%E4%BD%B3%E6%90%9C%E7%B4%A2%EF%BC%88greedy-best-first-search%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 贪婪最佳搜索（greedy best-first search）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A%EF%BC%9A-3"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">解释：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-A-%E6%90%9C%E7%B4%A2%EF%BC%9A%E7%BC%A9%E5%B0%8F%E6%80%BB%E8%AF%84%E4%BC%B0%E4%BB%A3%E4%BB%B7"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2     A*搜索：缩小总评估代价</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A%EF%BC%9A-4"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">解释：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%9D%E8%AF%81A-%E6%9C%80%E4%BC%98%E6%80%A7%E7%9A%84%E6%9D%A1%E4%BB%B6%EF%BC%9A%E5%8F%AF%E9%87%87%E7%BA%B3%E6%80%A7%EF%BC%88%E4%BA%A6%E7%A7%B0%E5%8F%AF%E5%AE%B9%E6%80%A7%EF%BC%89%E5%92%8C%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%88%E4%BA%A6%E7%A7%B0%E5%8D%95%E8%B0%83%E6%80%A7%EF%BC%89"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">保证A*最优性的条件：可采纳性（亦称可容性）和一致性（亦称单调性）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#A-%E7%AE%97%E6%B3%95%E7%9A%84%E6%9C%80%E4%BC%98%E6%80%A7"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">A*算法的最优性</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%A7%A0%E5%B1%80%E9%83%A8%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95%E5%92%8C%E6%9C%80%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">🧠局部搜索算法和最优化问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">局部搜索算法概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%88%AC%E5%B1%B1%E6%B3%95%EF%BC%88%E6%9C%80%E9%99%A1%E4%B8%8A%E5%8D%87%E7%89%88%E6%9C%AC%EF%BC%89-%E8%B4%AA%E5%A9%AA%E5%B1%80%E9%83%A8%E6%90%9C%E7%B4%A2"><span class="toc-number">2.0.0.2.</span> <span class="toc-text">爬山法（最陡上升版本）&#x2F;贪婪局部搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E7%88%AC%E5%B1%B1%E6%B3%95"><span class="toc-number">2.0.0.2.1.</span> <span class="toc-text">随机爬山法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%A6%96%E9%80%89%E7%88%AC%E5%B1%B1%E6%B3%95"><span class="toc-number">2.0.0.2.2.</span> <span class="toc-text">首选爬山法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E9%87%8D%E5%90%AF%E7%88%AC%E5%B1%B1%E6%B3%95"><span class="toc-number">2.0.0.2.3.</span> <span class="toc-text">随机重启爬山法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E6%90%9C%E7%B4%A2"><span class="toc-number">2.0.0.3.</span> <span class="toc-text">模拟退火搜索</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E6%9D%9F%E6%90%9C%E7%B4%A2"><span class="toc-number">2.0.0.4.</span> <span class="toc-text">局部束搜索</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95"><span class="toc-number">2.0.0.5.</span> <span class="toc-text">遗传算法</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%F0%9F%A7%A0%E5%AF%B9%E6%8A%97%E6%90%9C%E7%B4%A2-%E5%8D%9A%E5%BC%88"><span class="toc-number">3.</span> <span class="toc-text">🧠对抗搜索-博弈</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%9A%E5%BC%88"><span class="toc-number">3.0.0.1.</span> <span class="toc-text">博弈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MINIMAX%E7%AE%97%E6%B3%95"><span class="toc-number">3.0.0.2.</span> <span class="toc-text">MINIMAX算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E4%BA%BA%E5%8D%9A%E5%BC%88"><span class="toc-number">3.0.0.3.</span> <span class="toc-text">多人博弈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#alpha-beta-%E5%89%AA%E6%9E%9D"><span class="toc-number">3.0.0.4.</span> <span class="toc-text">$\alpha$ -$\beta$剪枝</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E5%8D%9A%E5%BC%88%E7%AE%97%E6%B3%95%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-number">3.0.0.5.</span> <span class="toc-text">对博弈算法的优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E5%8D%9A%E5%BC%88"><span class="toc-number">3.0.0.6.</span> <span class="toc-text">随机博弈</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E5%BD%95"><span class="toc-number">4.</span> <span class="toc-text">附录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BD%97%E9%A9%AC%E5%B0%BC%E4%BA%9A%E5%9C%B0%E5%9B%BE"><span class="toc-number">4.0.0.1.</span> <span class="toc-text">1.罗马尼亚地图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BD%97%E9%A9%AC%E5%B0%BC%E4%BA%9A%E9%97%AE%E9%A2%98%E7%9A%84A-%E8%A7%A3%E6%B3%95%EF%BC%88h-n-hLSD%EF%BC%89"><span class="toc-number">4.0.0.2.</span> <span class="toc-text">2. 罗马尼亚问题的A*解法（h(n)&#x3D;hLSD）</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(/2020/10/30/aima/top_img.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">江城子</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 基地</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">aima中的一些点</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-10-30T07:18:36.000Z" title="发表于 2020-10-30 15:18:36">2020-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-12-30T09:24:18.257Z" title="更新于 2020-12-30 17:24:18">2020-12-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">21.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>64分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>❤️：文中可能会看到一些莫名的”*”，这是本地markdown转到博客里来有些地方转换的有问题，忽略即可，不影响阅读。</p>
+<h1 id="🧠经典的搜索算法搜索"><a href="#🧠经典的搜索算法搜索" class="headerlink" title="🧠经典的搜索算法搜索"></a>🧠经典的搜索算法搜索</h1><h2 id="搜索问题的定义"><a href="#搜索问题的定义" class="headerlink" title="搜索问题的定义"></a>搜索问题的定义</h2><p>为达目标，寻找从初始状态到目标状态的行动序列的过程被称为搜索。</p>
+<p>搜索算法输入的是问题，输出的是问题的解，问题的解以行动序列的形式返回。</p>
+<p>搜索算法要做的就是生成后继并区分目标状态与非目标状态，<strong>这些搜索策略是以节点扩展的次序来分类的。</strong></p>
+<p>能知道<strong>一个非目标状态是否比其它状态更有希望接近目标</strong>的策略，称为有信息搜索策略或者启发式搜索策略。</p>
+<p>对于<strong>算法性能考量的四个方面：</strong></p>
+<ul>
+<li><p><strong>完备性：</strong>当问题有解的时候，这个算法能否能保证找到解？</p>
+</li>
+<li><p><strong>最优性：</strong>这个搜索策略能否找到问题所要求的最优解？（例如：在罗马尼亚问题(城市路径问题)中，路径耗散值最小的即为最优解。）</p>
+</li>
+<li><p><strong>时间复杂度：</strong>完成求解过程需要花费多少时间？</p>
+</li>
+<li><p><strong>空间复杂度：</strong>执行算法的过程中需要多少内存？</p>
+</li>
+</ul>
+<p>对以下图（初始状态S，目标状态G）</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/%E9%80%89%E5%8C%BA_082.png" alt="选区_082"></p>
+<p><strong>树搜索：</strong></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/%E9%80%89%E5%8C%BA_083.png" alt="选区_083"></p>
+<p><strong>图搜索：</strong></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/%E9%80%89%E5%8C%BA_084.png" alt="选区_084"></p>
+<p>open表与closed表：</p>
+<p>open表(开结点表，或称为<strong>边缘集</strong>)：即为待扩展的结点的集合（自然，待扩展的结点都是叶结点，还没被扩展嘛）。</p>
+<p>在树搜索（TREE-SEARCH）算法的基础上，我们增加了一个新的结构–探索集，如此得到的新算法叫做图搜索（GRAPH-SEARCH）算法。</p>
+<p>closed表(或称<strong>探索集</strong>)：即为已经扩展过的结点的集合。</p>
+<p>♥️做closed表的目的主要是为了记住已经走过的路，避免探索冗余路径（即重复探索,如下图若不去避免可能二次探索Arad,而上面的三幅图展示的可以看出图搜索算法中在后面的探索中则把已扩展结点c和e都给舍弃不再向下扩展了。）。一个<strong>新生成的结点</strong>B<strong>若是与已经生成的某个结点A相匹配的话</strong>（<strong>即</strong>这个结点B（或者说A）<strong>已经在探索集或是边缘集中了</strong>。不管是在哪个集子里都说明我们已经访问过了，在closed表中自然不用说，这表明它可扩展的结点已经全部扩展完了，我们不需要再去访问它；而如果它是在open表中，那么我们需要做的是待到这个新生成结点的父结点将自己可以扩展的结点都扩展完了，再根据我们的搜索策略按顺序去对A结点进行扩展，因此我们我们不需要对它做什么多余的操作或者说不该把它当成另一个待扩展的有效新结点，即➡️括号外面接下去那句话👉），那么它将被丢弃而不是被加入到边缘集中（因为我们不该去反复记录同一个结点，否则这两个表就失去了它避免重复探索的意义了。）</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/l1.png" alt="l1"></p>
+<p>（ frontier即边缘集：已生成未拓展；closed即探索集：已拓展）</p>
+<p>下面展示的便是一次搜索过程，可以看到在生成新结点的时候若该结点已经存在于边缘集或探索集中了则被舍弃。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/l2.png" alt="l2"></p>
+<p>​                                                                                 :arrow_down:</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/l3.png" alt="l3"></p>
+<p>​                                                                                  :arrow_down:</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/l4.png" alt="l4"></p>
+<p>​                                                                        ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ :arrow_down:</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/l5.png" alt="l5"></p>
+<table>
+<thead>
+<tr>
+<th>无信息搜索策略（盲目搜索）：<br>无信息指的是除了问题定义中提供的状态信息外，没有任何附加信息</th>
+<th>有信息搜索策略（启发式搜索）：<br>指的是使用问题本身的定义之外的特定知识——比无信息的搜索策略<strong>更有效</strong>地进行问题求解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>宽度优先搜索<br>(广度优先搜索,breadth-first search,BFS)</td>
+<td>贪婪最佳优先搜索</td>
+</tr>
+<tr>
+<td>一致代价搜索（uniform-cost search）</td>
+<td>A*搜索（顺便说一下启发函数）</td>
+</tr>
+<tr>
+<td>深度优先搜索（deepth-first search,DFS）</td>
+<td>随机搜索</td>
+</tr>
+<tr>
+<td>深度受限搜索（depth-limited search）</td>
+<td>爬山搜索</td>
+</tr>
+<tr>
+<td>迭代加深的深度优先算法<br>(iterative deepening search)</td>
+<td>模拟退火算法</td>
+</tr>
+<tr>
+<td>双向搜索（不展开）</td>
+<td>遗传算法</td>
+</tr>
+</tbody></table>
+<h2 id="1-无信息搜索（盲目搜索）"><a href="#1-无信息搜索（盲目搜索）" class="headerlink" title="1.无信息搜索（盲目搜索）"></a>1.无信息搜索（盲目搜索）</h2><p><strong>解释：</strong>无信息指的是除了问题定义中提供的状态信息外，没有任何附加信息，无信息搜索方法只能访问问题的定义。</p>
+<h3 id="1-1宽度优先搜索-（广度优先搜索-breadth-first-search-BFS"><a href="#1-1宽度优先搜索-（广度优先搜索-breadth-first-search-BFS" class="headerlink" title="1.1宽度优先搜索 （广度优先搜索,breadth-first search,BFS)"></a>1.1宽度优先搜索 （广度优先搜索,breadth-first search,BFS)</h3><p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/69542.png" alt="69542"></p>
+<h4 id="算法："><a href="#算法：" class="headerlink" title="算法："></a><strong>算法：</strong></h4><p>先扩展根结点，接着扩展根结点的所有后继，然后再扩展它们的后继，依此类推，即总是扩展深度最浅的结点。因此，一般地，在下一层的任何结点扩展之前，搜索树上本层深度的所有结点都应该已经扩展过了。</p>
+<h4 id="实现："><a href="#实现：" class="headerlink" title="实现："></a><strong>实现：</strong></h4><p>由于总是先扩展深度最浅的结点，故可以通过将边缘组织成FIFO<strong>队列</strong>来实现（就是说从根结点开始我们总是把新结点（该结点的深度自然要比父结点深）加入到队尾，这样我们会将一层的所有结点依次加入到队列，接着才是下一层的结点依次加入队列，如此一来浅层的所有老结点必然会在深层的结点扩展之前被扩展开来。）</p>
+<p>⚠️<strong>注意点：</strong>宽度优先搜索具有一般图搜索框架，会忽视所有的边缘结点或已扩展结点的新路径（意思就是已经在open或者close表中的结点不会再走一遍了），因为可以看出，这样的路径至少和已经找到的一样深了（这里仅仅是从深度来看，未考虑路径权值）。所以说，宽度优先搜索总是有到每一个边缘结点的最浅路径。</p>
+<h4 id="性能："><a href="#性能：" class="headerlink" title="性能："></a><strong>性能：</strong></h4><h5 id="完备性：✅（假设分支因子b是有限的）。"><a href="#完备性：✅（假设分支因子b是有限的）。" class="headerlink" title="完备性：✅（假设分支因子b是有限的）。"></a><strong>完备性</strong>：✅（假设分支因子b是有限的）。</h5><p>如果<strong>最浅的目标结点</strong>的深度为d，那宽度优先搜索在扩展完比它浅的所有结点之后最终一定能找到该目标结点。目标结点一经生成我们就知道它一定是最浅的目标结点，因为所有比它浅的结点在此之前都已经生成并且肯定没能通过目标测试（即判断是否为目标状态）。<strong>最浅的目标结点未必就是最优的目标结点（因为我们深度的加深不一定意味着路径代价的增大，要看具体的路径代价是怎么定义的</strong>。例如同样是从北京到上海，路线1: 北京➡️乌鲁木齐➡️成都➡️上海，和，路线2: 北京➡️天津➡️济南➡️扬州➡️南京➡️上海。如果以路程长度作为代价，那可以看出虽然第一条路线从北京仅仅往下三个结点就到了上海，而第二条路线则往下五个结点才到上海，然而从地理上来看可以知道明显是第二条路线路程更短，即在仅有这两条路线的情况下，走路线2才是最优解）。<strong>从技术上来看，如果路径代价是基于结点深度的非递减函数，那么宽度优先搜索是最优的。</strong>（🍎简单来看递增即意味着结点越深代价也越来越大；即使路径代价是非递减函数，那深处的结点也自然不会比浅处的结点代价小，那同样也没必要去换一条新的路径。）</p>
+<p>附录中的【1.罗马尼亚地图】供以参考，可以看到路径权值并不是规律的，像这样的图在搜索时我们自然不能保证代价会随着深度的增加而变大。</p>
+<blockquote>
+<p>🎍注：深度优先搜索的<strong>目标测试</strong>是<strong>在结点被生成的时候</strong>做，而不是结点被选择扩展的时候，原因是完备性中讲的，“目标结点一经生成就一定是最浅的目标结点”，即在结点生成时我们就能做目标测试看当前结点状态是不是目标状态，<strong>是的话问题就解决了</strong> (虽然我们说的时候说的是所谓“最浅”的目标结点，就是说还可能找到其它的目标结点，但那就是最优不最优的问题了，就问题能够得到解决而言找到一个目标结点那这个问题就已经解决了。)，就不用再继续让其它结点往下扩展了，自然也不用等到这个结点被扩展的时候了。</p>
+</blockquote>
+<h5 id="最优性："><a href="#最优性：" class="headerlink" title="最优性："></a>最优性：</h5><p><strong>从技术上来看，如果路径代价是基于结点深度的非递减函数，那么深度优先搜索是最优的，因为越往下代价越大嘛。因此宽度优先搜索在单位代价或者说是每一步行动代价相等的情况下是最优的。</strong></p>
+<h5 id="时间和空间复杂度："><a href="#时间和空间复杂度：" class="headerlink" title="时间和空间复杂度："></a><strong>时间和空间复杂度：</strong></h5><p>想象一个每个结点有b个子结点，深度为d的搜索树，搜索的时间和空间复杂度都将达到指数级别。时间复杂度达到O(b^d^),空间复杂度将达到O(b^d^)。</p>
+<blockquote>
+<p><strong>🎍注1：</strong>对于任何类型的图搜索，如果每个已扩展的结点都已保存在探索集中，空间复杂度总是在时间复杂度的1/b内。</p>
+</blockquote>
+<blockquote>
+<p><strong>🎍注2👹👹👹</strong> :出于对时间和空间复杂度的考虑，一般来讲，<strong>指数级别复杂度的搜索问题不能用无信息搜索的搜索算法求解</strong>，除非是规模很小的实例。</p>
+</blockquote>
+<blockquote>
+<p><strong>🎍注3：</strong>一般来说宽度优先遍历找到最浅的目标结点就算完成任务了，因此说不一定能得到最优解，如果对其进行改进，即在找到最浅目标结点时不立即退出，而是记录下这个目标结点的路径和路径代价（路径耗散），然后继续搜索如能得到多个目标结点，将它们加以比较，留下较优的结点，这样等把所有可能的路径都搜素完了之后再输出记录的最优路径，即得到的便是最优解了。</p>
+</blockquote>
+<p><strong>总结：</strong></p>
+<p>​    缺点：问题规模上升时，时间复杂度和空间复杂度可能会很大。由于在找到目标结点之前需要把每一层都给遍历一遍，故消耗的时间大，而在上一层结点全部扩展完之前需要把所有生成的新结点都给存起来，因此占的空间要比深度优先大得多，在程序设计中必须要考虑溢出和节省内存空间的问题。</p>
+<h3 id="1-2-一致代价搜索（uniform-cost-search，UCS）"><a href="#1-2-一致代价搜索（uniform-cost-search，UCS）" class="headerlink" title="1.2 一致代价搜索（uniform-cost search，UCS）"></a>1.2 一致代价搜索（uniform-cost search，UCS）</h3><h4 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h4><p>从1.1的分析可以知道由于宽度优先搜索总是先扩展深度最浅的未扩展结点，所以它需要在所有结点路径代价随深度增加都非递减的时候才能实现最优（如当每一步的行动代价都相等时。）</p>
+<p>而现在我们希望找到<strong>一个能对任何单步代价函数都是最优的算法</strong>。</p>
+<p>于是我们不再选择扩展深度最浅的结点，<strong>一致代价搜索（uniform-cost search）</strong>扩展的是路径消耗g(n)最小的结点n。</p>
+<h4 id="算法：-1"><a href="#算法：-1" class="headerlink" title="算法："></a>算法：</h4><p>上述目的可以通过将边缘结点集组织成按g值排序的队列来实现，每次扩展的都是g值最小的点。</p>
+<h4 id="实现：-1"><a href="#实现：-1" class="headerlink" title="实现："></a>实现：</h4><p>如上所述的<strong>优先级队列</strong></p>
+<blockquote>
+<p><strong>🎍注1：</strong>除了按照路径代价对队列进行排序外，<strong>一致代价搜索与宽度优先搜索还有两个显著的不同：</strong></p>
+<p>​        看不懂下面的解释说的意思，就先看下面的具体例子(🤡)，然后结合着看看。</p>
+<ul>
+<li><p>一👤是目标检测是在结点被选择扩展时，而不是在结点生成时进行。因为第一个生成的目标结点不一定是在最优路径上。</p>
+<p>解释：当这个结点M被它的父结点A生成的时候，如果M恰好是一个目标结点，我又对它做了目标检测，那么自然符合目标状态，我便会选择它作为问题的一个解；</p>
+<p>「</p>
+<p>补充，这部分想了解一下就看看</p>
+<p>🧠要知道目标检测不是白做的，不是说做了之后如果它恰好是目标结点，我照样不选它还去看别的结点别的路径。目标检测只要是做了，做了之后找到目标结点了，那这个算法的任务就结束了，这个目标结点就是我最后要返回的值了，就是最后认定的这个问题的解了，否则目标检测就失去了它的意义了（见下面<strong>🎍注1.1：</strong>）。【🍎在搜索的过程中目标结点当然可能会出现多次，但要是被做了目标检测那就得被当作解没跑了。关于目标结点（假设叫B）出现多次的问题，在一般的图搜索框架里，如果B第二次出现（不管是和探索集还是边缘集中的结点重复了）那它就得被丢到垃圾桶里了不会被理睬，但是在一致代价搜索中则引入了一个额外测试（即下面要说的二👥），可以保留一个依赖于路径代价的更优结点（虽然它们都叫B，但是附带的路径代价可不一样）。】</p>
+<p><strong>这也引出了一致代价搜索中另一个需要关注的点：</strong>即在一个结点被选中为要扩展的结点之前，我们是不知道它就是一个目标结点的，只有在它作为一个边缘集中普通的待扩展结点因g值小而被选中进行扩展的时候才会对它去做目标检测，这个时候我们会发现它就是目标结点，返回之。下面就来解释为什么在被选中要扩展时才进行目标检测。</p>
+<p>」</p>
+<p>继续解释：如果像上面所说生成就检测那找到一个目标结点这个算法就结束了，而我们随便想想，在整个图中明显是可能会存在更好的路径的（即代价小更优的解），当然不希望在这里就停下脚步而是想找到一个方法直接把那个最优的给检测出来，因此这就是不能一生成就检测的原因。</p>
+<p>🍎<strong>正向推理为啥被选中扩展时做目标检测可以得到最优解：</strong></p>
+<p>我们选择把每一个新生成的结点都视作图中一个普通的结点（没做检测之前，自然每个结点看上去都是一样的普通的结点。）加入边缘集中，继续按照路径代价最低原则选择其中的结点进行扩展，可想而知如果有其它结点的g值比B低，那B就得一直呆在边缘集里，只能让其它某个g值小的结点P先被选中，并做目标检测，发现P不是目标结点，则将P扩展开来，如此继续下去（这过程中可能还会遇到其它结点扩展后也得到了B的情况，和普通结点一样使用「额外测试」（见二👥）留下一个代价小的），直到某时B的g值是边缘集中最小的那个，那么自然B被选中，做目标检测，发现它恰好是一个目标结点，找到解了！而此时边缘集中的那些结点的g值都比它大，那继续扩展下去自然路径代价越加越大（这里我们默认每个单步的代价都是正的），所以说此时到达B的路径代价就是最小的（<strong>放在更一般的结点上也可以知道，被选中扩展的结点必然已经找到了到达该点的最优路径</strong>），也就是说现在我们找到了问题的最优解！这里通过上面的分析也可以知道在算法运行过程中，每次有两条都能通往B的路径冲突时，是能选出代价更小的那条的，因此即使有冲突我们得到的也是路径代价路径代价越来越小的B，即每次冲突时B都能得到当前最优路径，直到像我们上面说的到了它有资格被选出做目标检测了，它所附带的路径代价必定是最低的，也就是得到了最优解了。</p>
+</li>
+</ul>
+<p>  <strong>🎍注1.1：</strong> 目标检测<strong>，即判断当前结点状态是否为目标状态（也就是到这里我是不是已经完成了任务了），</strong>目标状态是看解的，是解就行，而不是还去管它是不是最优解。<strong>因此之前的宽度优先搜索为啥说得到的不一定是最优解呢？就是因为它的目标检测发生在结点生成的时候，当目标结点生成了，被检测到了，那任务就结束了，所以宽度优先搜索它最后得到的解永远只是最浅层目标结点所对应的一个解，</strong>只有在路径代价符合随深度非递减的时候**（关于这点的解释到上面去看宽度优先中「完备性处的🍎」，「🎍注」和「最优性」就明白了），返回的才是最优解，当然这个最优解此时就是在宽度优先搜索的最浅层，所以才会被返回。因此我们说如果想要一个“宽度优先搜索”总能够得到最优解，那就要对它作出改进「见宽度优先搜索🎍注3：」。</p>
+<ul>
+<li><p>二👥是如果边缘中的结点有更好的路径到达该结点那么会引入一个测试。</p>
+<p>解释：<strong>这里说有更好的路径说对任意结点说的（即对于某个结点M，有更优的路径到达这里），目标结点当然也适用。</strong>当边缘集中已经有了一个结点M，而某时当我正常地「依据路径代价最小的原则」对边缘集中的一个g值最小的结点P进行扩展时，扩展后也得到了M（即也得到了一条到达M的路径），但是一个边缘集中当然不能有两个一样的结点啦（这点没啥好深究的，边缘集里面就是这张图里面的一些点嘛，肯定不会放两次进去，在前面的一般图搜索中也说了遇到已经在边缘集中的会直接舍弃不会再放进去一次，不过这里涉及路径的更优代价，所以我们会做比较。），所以我要比较到达这两条路径的代价（即PATH-cost或是g），比如下面的B(278)，B(310)【我们定义的结点都是附带路径代价值的】，去选择代价更小的一条路径，边缘集中只保留这个路径代价值更小的M（如B(278)），这也说明了边缘集中加入的结点M其路径代价都是「当前」能找到的最低的路径代价，即其路径是「目前」能找到起点到M的最优路径。</p>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>🤡以具体例子说明：</p>
+</blockquote>
+<blockquote>
+<p>下图五座城市简写为S，F，B，R，P。S为初始状态，B为目标状态，</p>
+<p>设边缘集为E，Path-cost即为当前结点路径代价，下面用g(X)，（或称g值）表示。</p>
+<p>当S扩展结束之后，边缘集中应该有F，R两个结点，现在则要对它们进行扩展，</p>
+<p>E={F，R}，g(F)=99,g(R)=80;显然R的g值小，那么扩展R，「目标检测：当前结点状态非目标状态」，得到P，g(P)=97+g(R)=177；加入边缘集，</p>
+<p>E={F,P}，g(F)=99，g(P)=177，g(F)&lt;g(p)，选择扩展F，「目标检测：当前结点状态非目标状态」，得到B，g(B)=310(注意哦这个时候没有对B进行检测)，加入边缘集，</p>
+<p>E={P,B}，g(P)=177，g(B)=310，g(p)&lt;g(B)，选择扩展P，「目标检测：当前结点状态非目标状态」，得到B，  g(B)=278，本应该将B(278)加入边缘集，但此时边缘集合已经存在B(310),</p>
+<p>此时引入一次额外的测试，即判断两条到达B的路径哪个Path-cost更小，显然会选择B(278)，B(278)加入边缘集覆盖B(310)，成为边缘集中唯一的B结点，🎾我们当然不能让一个集合中有两个都叫做B的结点啦🎾。</p>
+<p>现在要做的是对边缘集中的待扩展结点进行扩展，此时边缘集合中只有B(278)，于是选择对B(278)进行扩展，「目标检测：B(278)正是目标结点」，将B(278)作为问题的解返回，♥️且B(278)必然是最优解！♥️（不知道为啥是最优解🤷‍♂️？看上面的“🍎<strong>正向推理为啥被选中扩展时做目标检测可以得到最优解：</strong>”。）</p>
+</blockquote>
+<p>   <img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6955.jpg" alt="IMG_6955"></p>
+<h4 id="性能：-1"><a href="#性能：-1" class="headerlink" title="性能："></a>性能：</h4><h5 id="完备性："><a href="#完备性：" class="headerlink" title="完备性："></a>完备性：</h5><p>AIMA3书上面的表述“一致代价搜索总是考虑当前路径的总代价，而不去考虑步数，所以如果存在零代价的行动，那么就可能陷入死循环—-例如NoOp行动。<strong>如果每一步的代价都大于等于某个正值$\varepsilon$，那么一致代价搜索就是完备的。</strong>”</p>
+<p>我猜想这里存在零代价的行动应该是没法让当前结点某个扩展去到一个新的结点，而是指向自身（停留在当前结点），这样被指向的自身又是一个新结点，那这个新结点的代价自然还是最小的，所以还是选择它来扩展，然后又指向自身，所以是死循环吧。我本来想的零代价是，比如我要从北京到上海，那么如果中间有一个山东济南，然后从北京到济南的机票是免费的（以费用为代价的话那着一步就是零代价了），那么路径还是可以从北京扩展到山东然后去上海的，就不会有死循环。所以我感觉说死循环的话应该是上面那个猜想吧？另外它说是可能陷入死循环，那这两种都算是可以考虑进去的情况吧。</p>
+<h5 id="最优性：-1"><a href="#最优性：-1" class="headerlink" title="最优性："></a>最优性：</h5><p>经过前面的一通分析，显然一致代价搜索<strong>是最优的</strong>(当然是在上面所说的完备性的前提下)。</p>
+<p>并且过程中也是按照每个结点的最优路径顺序进行结点扩展的（算法最是按照最小路径代价来选择扩展结点，所以越到后面被扩展的结点路径代价也就越大，或者叫做代价沿着路径是递增的）。由此往后，第一个被选择的目标结点也一定是最优解（本算法里讨论的都是代价都为正值，可以回看前面的分析，边缘集中无疑只能保留一个B结点，如果有更优的路径那被保留下来最后被选择的肯定就是那条路径了，而不会是现在这条(B(278))，所以既然最后被选择那就说明前面一定把比它长的都干掉了，可能会问那会不会还有没被发现到B的路径呢？也不会，如果边缘集中有一个P结点可以扩展到B并且代价更低，那首先P的代价就肯定比B(278)要小，可既然现在B(278)在边缘集中被选出来了，那说明它比边缘集中其它任何结点代价都要小，即也比P的代价小，P再往后扩展路径肯定就更大了。），所以选择完了目标检测符合了，这个算法也就结束了。</p>
+<h5 id="时间复杂度、空间复杂度："><a href="#时间复杂度、空间复杂度：" class="headerlink" title="时间复杂度、空间复杂度："></a>时间复杂度、空间复杂度：</h5><p>一致代价搜索是由路径代价而不是深度来引导的，所以不能单纯的用b,d来表示算法的复杂度。</p>
+<p>我们引入一个C^*^用来表示最优解的代价，假设每个行动的代价至少为$\varepsilon$，则最坏的情况下算法的时间和空间复杂度为b^k^</p>
+<p>(因为符号冲突原因我好像打不了这么复杂的公式，</p>
+<p>所以这里说明一下：</p>
+<p>令C^*^= k1 , 最优解的代价</p>
+<p>k1/ $\varepsilon$ =k2, 即需要多少步(在生成最后最优解的目标结点时的探索深度，也就是最优结点上一层)</p>
+<p> 1+$\lfloor k2 \rfloor $=k；因为被生成时不检测，所以生成后最优目标这一层在选择被扩展结点时还要再扫一遍，所以+1</p>
+<p>宽度优先其实也是这样，如果深度优先不选择生成时检测，而是扩展时检测,那时间复杂度准确来说就是该就是O(b^d+1^)了。)</p>
+<p>这个代价其实要比b^d^ 大得多，因为一致代价搜索在搜索包含大代价的行动之前，经常会搜索代价小的行动所在的很大的搜索树（因为结点扩展是按g值从小到大来的嘛），当<strong>所有的单步耗散都相等的时候，b^k^ 就是b^d+1^</strong> ，此时一致代价搜索除了终止条件外与宽度优先搜索类似（因为此时往前扩展一个点，即深一层，那么总代价就多一个单步耗散值，因此所有的同层结点往下延伸的时候都是增加一样的代价，和宽度优先搜索类似）。 宽度优先搜索找到一个解就终止了，而一致代价搜索则会检查目标深度所有结点看谁的代价最小，如此一来一致代价搜索在深度d做了很多无意义的工作，不过当然了这样可以找到最优解。 </p>
+<p>从下面的图中可以看出来，S扩展开来之后，扩展顺序是</p>
+<p>先扩展R，得到P，代价177，</p>
+<p>再扩展F，得到B，代价109，</p>
+<p>再扩展U，得到V，代价150，</p>
+<p>这时选择扩展B，目标检测发现它是目标结点，任务结束。</p>
+<p>可以看到第二步就已经得到我想要的B了，可是我却不能知道它就是目标结点（因为目标检测必须得在被选中扩展的时候做），但是为了防止有更小的代价路径，不得不再去和其它结点做代价比较，如果比下来就是它最小那还算好，可是这里居然U的代价比它还小，那就得先扩展U，完了之后再比较，这时候发现B的代价最小，选它做扩展，结果目标检测一做发现它就是目标结点。。。也就是说从我得到这个点到我确定它是解我又多走了了两步。</p>
+<p>当所有的单步耗散值都一样时，比如都是1，那从s出发F，U，R的代价都是一样的，那在找最小的代价时可以知道这三个点都会被扩展开来，得到B，V，P，代价也都是一样的，在对它们进行比较之后，它们都会被选中扩展，这时候B就会被检测出来是目标结点。可以看出这样一来一致代价搜索就宽度优先搜索一样都是逐层向下了，只是每次扩展的时候还是会多出比较的步骤。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6958.jpg" alt="IMG_6958"></p>
+<h3 id="1-3-深度优先搜索（deepth-first-search-DFS）"><a href="#1-3-深度优先搜索（deepth-first-search-DFS）" class="headerlink" title="1.3 深度优先搜索（deepth-first search,DFS）"></a>1.3 深度优先搜索（deepth-first search,DFS）</h3><h4 id="算法：-2"><a href="#算法：-2" class="headerlink" title="算法："></a>算法：</h4><p>深度优先搜索总是扩展搜索树中当前边缘集中最深的结点，如此一来搜索很快就会推进到搜索树的最深层，那里的结点没有后继，当那里的结点扩展完了之后，就从边缘集中去掉（即发现它没有后代了，没法再继续扩展了就不要留在边缘集里了，因为它无后了，即不再有其它结点与它相连，因此把这些没有后代的结点从内存中删除即可。），然后搜索算法回溯到下一个还能扩展的深度稍浅的结点。</p>
+<h4 id="实现：-2"><a href="#实现：-2" class="headerlink" title="实现："></a>实现：</h4><p>使用LIFO队列（后进先出，即用<strong>栈</strong>），最先生成的结点将最早被选择扩展。可以以递归实现。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6965.jpg"></p>
+<p>图1</p>
+<h4 id="性能：-2"><a href="#性能：-2" class="headerlink" title="性能："></a>性能：</h4><p>深度优先搜索的<strong>效率严重依赖于使用的是图搜索还是树搜索。</strong></p>
+<h5 id="完备性：-1"><a href="#完备性：-1" class="headerlink" title="完备性："></a>完备性：</h5><p><strong>图搜索</strong>可以避免重复状态和冗余路径，因此在<strong>有限状态空间</strong>是<strong>完备</strong>的，因为可以扩展到所有结点。</p>
+<p>而要是使用<strong>树搜索</strong>，则<strong>不完备</strong>了。</p>
+<p>（可以看一下附录里面的罗马尼亚地图，如果用树搜索算法以以下所示搜索树进行扩展（默认从左子树先开始）。从Arad开始，下一个则是Sibiu，由于没有重复避免，则下面又到了Arad，如此便陷入了死循环，故不完备。）</p>
+<p><strong>在无限状态空间中，都是不完备的。</strong>因为在无限状态空间里，如果遭遇了无限的又无法到达目标结点的路径，则无论是图搜索还是树搜索都会失败。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6966.jpg" alt="IMG_6966"></p>
+<p>图2</p>
+<h5 id="最优性：-2"><a href="#最优性：-2" class="headerlink" title="最优性："></a>最优性：</h5><p>无论是基于<strong>图搜索</strong>还是<strong>树搜索</strong>的深度优先搜索<strong>都不是最优的</strong>。</p>
+<p>例如图1中的例子，假设J和C代表的都是目标结点，但是由于深度优先搜索会先搜索整个左子树，那么当它搜索到J时就会返回J，即使C是更优解也没用，这其实和宽度优先搜索是一个道理，看到解就返回根本不去管后面有没有更好的解了。</p>
+<h5 id="时间复杂度、空间复杂度：-1"><a href="#时间复杂度、空间复杂度：-1" class="headerlink" title="时间复杂度、空间复杂度："></a>时间复杂度、空间复杂度：</h5><p>深度优先搜索的时间复杂度受限于状态空间的规模，甚至可能是无限的</p>
+<p>从上面可以看出深度优先搜索似乎没啥优势，事实上它<strong>最大的优点就是在空间复杂度上了，只有线性大小</strong>。</p>
+<p>深度优先搜索只需要存储一条从根结点到叶结点的路径，以及该路径上每个结点的所有未被扩展的兄弟结点即可。一旦一个结点被扩展，当它的所有后代都被探索过后该结点就从内存中删除，可参见图1.假设状态空间分支因子为b，最大深度为m，深度优先搜索只需要存储**O(bm)**个结点。</p>
+<p>以d=16,b=10为例，宽度优先要存10^19^ 字节，而深度优先只要156K字节，节省了大约7000亿倍空间。。。</p>
+<p><strong>因此深度优先搜索在AI的很多领域成为工作主力</strong>，其中包括约束满足问题（第六章），命题逻辑可满足性（第七章）和逻辑程序设计（第九章）。</p>
+<p>深度优先搜索的一种变形称为回溯搜索，所用的内存空间更少（详见第六章）。<strong>回溯搜索每次只产生一个后继，而不是生成所有的后继，每个被部分扩展的结点要记住下一个要生成的结点，如此内存只要O(m)而不是O(bm)。</strong></p>
+<p>回溯搜索催化了另一个节省内存和时间的技巧：通过直接修改当前的状态描述而不是先对它进行复制来生成后继，这可以吧内存需求减少到只有一个状态描述以及O(m)个行动。为了能达到这个目的，当我们回溯生成下一个后继时，必须能够撤销每次修改。对于状态描述相当复杂的问题，例如机器人组装问题，这些技术是成功的关键。</p>
+<h3 id="1-4-深度受限搜索（depth-limited-search）"><a href="#1-4-深度受限搜索（depth-limited-search）" class="headerlink" title="1.4 深度受限搜索（depth-limited search）"></a>1.4 深度受限搜索（depth-limited search）</h3><p>在无限状态空间中，深度优先搜索会比较尴尬，我们可以通过对深度优先搜索设置界限L来避免，简单来说就是深度为L的结点就被当作没有后继来对待了。深度界限解决了无穷路径的问题。</p>
+<p>然而这也有很多问题。</p>
+<p>加入最浅目标结点在所在深度为d，而我们设置的L&lt;d，那最浅的目标结点的深底都超过了深度限制了，显然当算法结束时我们回以找不到解失败而告终，也即这种搜索算法是不完备的。</p>
+<p>而如果我们设置的L&gt;d,那像上面分析一般的深度优先所说的那样，也可能找不到最优解，即这种搜索算法不是最优的。</p>
+<p>而且对于大多数问题，我们根本没法提前判断怎么样去设置一个合适的深度界限。</p>
+<p><strong>由于深度界限的设置，深度受限搜索的失败原因可能会有两种：</strong>一是标准的failure返回值表示无解，二是cutoff代表在深度界限内无解。（如果搜的过程中碰到界限了此时没搜到目标结点，那就算是深度界限内无解了，要是搜完了都没碰到界限而且还没解，那就是正常的问题无解了。）</p>
+<p>深度优先搜素可以被看作是特殊的深度受限搜索，其深度界限为L=∞，也就是没设限呗。</p>
+<h3 id="1-5-迭代加深的深度优先算法（iterative-deepening-search，IDS）"><a href="#1-5-迭代加深的深度优先算法（iterative-deepening-search，IDS）" class="headerlink" title="1.5 迭代加深的深度优先算法（iterative deepening search，IDS）"></a>1.5 迭代加深的深度优先算法（iterative deepening search，IDS）</h3><h4 id="解释：-1"><a href="#解释：-1" class="headerlink" title="解释："></a>解释：</h4><p>迭代加深的深度优先搜索是一种常用策略，经常和深度优先搜索结合使用来确定最好的深度界限。</p>
+<h4 id="算法：-3"><a href="#算法：-3" class="headerlink" title="算法："></a>算法：</h4><p>做法是不断增大深度限制，首先是0，接着是1，然后为2，依此类推——直到找到目标。当深度界限达到d,即最浅的目标结点所在深度时，就能找到目标结点。（可看下图）</p>
+<h4 id="完备性与最优性："><a href="#完备性与最优性：" class="headerlink" title="完备性与最优性："></a>完备性与最优性：</h4><p>和宽度优先搜索一样，当分支因子有限时，该算法是完备的；当路径代价是结点深度的非递减函数时该算法是最优的。</p>
+<p>当我们说深度优先搜索时候我们说他打不到最优是因为(不妨设搜索树中先搜左子树，再搜右子树)，我们在左子树中一查到底在很深的地方A找到了目标结点(即找到了一个解)，但是可能右子树上第一个结点B就是目标结点，可是深度优先也是找到解就返回了，所以它找不到B这个最优解。</p>
+<p>而迭代加深就不一样了，它的探索深度是一层一层往下加深的，所以当我们的当前深度限制为1的时候，就已经可以找到B了，即是可以找到最优解的, <strong>有点儿宽度优先那个味儿了</strong>。(当然也需要代价关于深度非递减就是啦。)由上所说，也可以知道，<strong>我们最先找到的，其实就是最优解</strong>(就是在最浅层嘛)。</p>
+<h4 id="时间与空间复杂度："><a href="#时间与空间复杂度：" class="headerlink" title="时间与空间复杂度："></a>时间与空间复杂度：</h4><p>b: 分支因子数；d：目标结点深度</p>
+<p>迭代加深的深度优先搜索算法<strong>结合了深度优先搜索和宽度优先搜索的优点</strong>，它的<strong>空间</strong>需求是合适的<strong>O(bd)</strong>;</p>
+<p>这个算法看起来比较浪费，因为状态被多次重复生成。但是事实上代价并不是很大，原因是在分支因子相同(相似)的搜索树中，绝大多数的结点都在底层，所以上层的结点重复生成多次影响不大。在迭代加深的深度优先搜索中，底层(深度d)结点只被生成了一次，倒数第二层的结点被生成了两次，依此类推，一直到根结点的子结点被生成了d次，因此生成结点的总数为：</p>
+<p>​                    N(IDS)=d*b+(d-1)*b^2^ +……..+1b^d^ ，</p>
+<p><strong>时间复杂度</strong>为**O( b^d^ )**，与宽度优先搜索相近。重复生成上层结点需要付出额外的代价，但不是很大。如，</p>
+<p>当b=10，d=5时，数目分别为：</p>
+<p>N(IDS) = 50+400+3000+20000+100000 = 123450;</p>
+<p>N(BFS) = 10+100+1000+10000+100000 = 111110;</p>
+<p>如果还是担心状态的重复生成的话，那可以将本算法和宽度优先混合使用，先用宽度优先搜索直到有效内存耗尽，然后对边缘集中的所有结点应用迭代加深的深度优先搜索。</p>
+<p>迭代加深的深度优先搜索和广度优先搜索相似，每次迭代要把当前层的新结点全部探索一遍。</p>
+<p>还有一种算法是将一致代价搜索和迭代加深的深度优先搜索结合，在一致代价确保最优化的同时避免了大量的内存需求，主要思想是用不断增加的路径代价界限代替不断增加的深度界限，基于这种思想的算法被称为迭代加长搜索(iterative lengthening search)。不幸的是，与一致代价搜索相比，事实上迭代加长搜索将导致额外的开销。</p>
+<p>总结：<strong>一般来说，当搜索空间较大并且不知道解所在深度时，迭代加深的深度优先搜索是首选的搜索方法。</strong></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6969.jpg" alt="IMG_6969"></p>
+<h3 id="1-6-双向搜索"><a href="#1-6-双向搜索" class="headerlink" title="1.6 双向搜索"></a>1.6 双向搜索</h3><h4 id="解释：-2"><a href="#解释：-2" class="headerlink" title="解释："></a>解释：</h4><p>同时运行两个搜索，一个从初始状态向前搜索，同时另一个从目标状态向后搜索，我们希望他们在中间某点相遇，此时搜索终止。</p>
+<h4 id="算法：-4"><a href="#算法：-4" class="headerlink" title="算法："></a>算法：</h4><p>将目标测试替换为检查两个方向的搜索的边缘集是否有相交，如果交集不为空那么就找到了一个解了（通过那个结点就可以把正反向路径给连接起来了）。但是这样找到的<strong>可能不是最优解</strong></p>
+<h3 id="1-7-无信息搜索基本算法的一些结论："><a href="#1-7-无信息搜索基本算法的一些结论：" class="headerlink" title="1.7 无信息搜索基本算法的一些结论："></a>1.7 无信息搜索基本算法的一些结论：</h3><p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6970.jpg" alt="IMG_6970"></p>
+<ul>
+<li><p><strong>宽度优先搜索：</strong>总是扩展搜索树中深度最浅的结点。算法是完备的，在单位代价的情况下是最优的，但是具有指数级别的空间复杂度。</p>
+</li>
+<li><p><strong>一致代价搜索：</strong>扩展的是当前路径代价g(n)最小的结点，对于一般性的步骤代价而言是最优的。</p>
+</li>
+<li><p><strong>深度优先搜索：</strong>扩展搜索树中最深的结点。它既不是完备的，也不是最优的，但是它具有线性的空间复杂度。<strong>深度受限搜索</strong>在深度优先搜索上加了深度限制。</p>
+</li>
+<li><p><strong>迭代加深搜索：</strong>在不断增加的深度限制上<strong>调用深度受限搜索</strong>直到找到目标。它是完备的，在单位代价的情况下是最优的，它的时间复杂度可与宽度优先搜索比较，具备线性的空间复杂度。</p>
+</li>
+<li><p><strong>双向搜索：</strong>可以在很大的程度上降低时间复杂度，但是它并不总是可行的并且可能需要太多的内存空间。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">搜索算法</th>
+<th align="center">备注</th>
+<th align="center">结点扩展方式</th>
+<th align="center">完备性</th>
+<th align="center">最优性</th>
+<th align="center">时间复杂度</th>
+<th align="center">空间复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">宽度优先搜索</td>
+<td align="center"></td>
+<td align="center">总是扩展搜索树中深度最浅的结点</td>
+<td align="center">✅（当然需要分支因子有限就是了）</td>
+<td align="center">单位代价情况下是最优的</td>
+<td align="center">O(b^d^ )</td>
+<td align="center">O(b^d^ )<br>深度为d,每一层都有b个结点</td>
+</tr>
+<tr>
+<td align="left">一致代价搜索</td>
+<td align="center"></td>
+<td align="center">扩展的是当前路径代价g(n)最小的结点</td>
+<td align="center">分支因子有限，对于每个单步代价都是正数的问题✅</td>
+<td align="center">一般性的步骤代价而言是最优的</td>
+<td align="center">b^k^(令C^*^= k1 ,k1/ $\varepsilon$ =k2, 1+$\lfloor k2 \rfloor $=k)</td>
+<td align="center">b^k^(令C^*^= k1 ,k1/ $\varepsilon$ =k2, 1+$\lfloor k2 \rfloor $=k)</td>
+</tr>
+<tr>
+<td align="left">深度优先搜索</td>
+<td align="center"></td>
+<td align="center">扩展搜索树中最深的结点</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center">O(b^m^ ),甚至可能是无限的</td>
+<td align="center">线性，O(bm)</td>
+</tr>
+<tr>
+<td align="left">深度受限搜索</td>
+<td align="center">在深度优先上加了深度限制</td>
+<td align="center"></td>
+<td align="center">L&lt;d,不完备；<br>L&gt;d,当正常的有限状态空间的深度优先看也不完备</td>
+<td align="center">L&lt;d都找不到解更别说最优了；<br>L&gt;d,当正常的有限状态空间的深度优先看也不是最优</td>
+<td align="center">O(b^l^ )</td>
+<td align="center">O(bl)</td>
+</tr>
+<tr>
+<td align="left">迭代加深搜索</td>
+<td align="center">在不断增加的深度限制上调用深度受限搜索</td>
+<td align="center"></td>
+<td align="center">✅（需要分支因子有限）</td>
+<td align="center">单位代价情况下是最优的</td>
+<td align="center">可与宽度优先比较O(b^d^ )</td>
+<td align="center">线性O(bd)</td>
+</tr>
+<tr>
+<td align="left">双向搜索</td>
+<td align="center">并不总是可行</td>
+<td align="center"></td>
+<td align="center">分支因子有限，双向都使用宽度优先搜索时✅</td>
+<td align="center">单步代价，双向都使用宽度优先搜索✅</td>
+<td align="center">很大程度上降低时间复杂度,双向都用宽度优先O(b^d/2^ )</td>
+<td align="center">可能需要太多的内存空间，双向都用宽度优先O(b^d/2^ )</td>
+</tr>
+</tbody></table>
+<h2 id="2-有信息搜索（启发式搜索）"><a href="#2-有信息搜索（启发式搜索）" class="headerlink" title="2 有信息搜索（启发式搜索）"></a>2 有信息搜索（启发式搜索）</h2><p>解释：有信息搜索即除了使用问题本身的定义之外，还能利用特定的知识，能比无信息搜索策略更加有效地进行问题求解。</p>
+<p>我们要考虑的一般算法称为最**佳优先搜索(best-first search)**。</p>
+<p><strong>最佳优先搜索</strong>是一般TREE-SEARCH和GRAPH-SEARCH算法的一个实例，<strong>结点基于评价函数f(n)值被选择扩展</strong>。</p>
+<p><strong>评估函数</strong>被看作是代价估计，因此评估值最低的结点被选择首先进行扩展。</p>
+<p><strong>最佳优先图搜索的实现与一致代价搜索类似</strong>，只不过最佳优先搜索是根据f值而不是g值对优先级队列排队。</p>
+<p>对f的选择决定了搜索策略，大多数最佳优先搜索算法的f由**启发函数(heuristic function)**构成：</p>
+<p>​                                    h(n) = 结点n到目标结点的最小代价路径的代价估计值；</p>
+<p>(要注意的是h(n)以结点为输入，但它与g(n)不同，它只依赖于结点状态，拿罗马尼亚问题举例，我们可以用Arad到Bucharest的直线距离来估计从Arad到Bucharest的最小代价路径的代价值。)</p>
+<p><strong>启发式函数</strong>，是在搜索算法中利用问题额外信息的最常见的形式。目前我们假设启发信息是非负的由问题而定的函数。有一个约束：若n是目标结点，则h(n) = 0;</p>
+<h3 id="2-1-贪婪最佳搜索（greedy-best-first-search）"><a href="#2-1-贪婪最佳搜索（greedy-best-first-search）" class="headerlink" title="2.1 贪婪最佳搜索（greedy best-first search）"></a>2.1 贪婪最佳搜索（greedy best-first search）</h3><h4 id="解释：-3"><a href="#解释：-3" class="headerlink" title="解释："></a>解释：</h4><p>贪婪最佳搜索总想扩展离目标最近的结点，理由是这样可能可以快点儿找到解。</p>
+<p>因此，它只用启发式信息，即f(n) = h(n) ;</p>
+<p>将此算法应用到罗马尼亚问题中，使用直线距离启发式，记为h<del>LSD</del>。</p>
+<p>如果目的地是Bucharest，那么我们需要知道到达Buchares的直线距离，如下图所示。</p>
+<p>如h<del>LSD</del>(In(Arad)) = 366。要注意的是，<strong>h<del>LSD</del>是不能由问题本身的描述计算得到的</strong>，所以说是在利用额外的信息嘛。而且根据日常经验，h<del>LSD</del>和实际路程是相关的，因此这是一个有用的启发式。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6972.jpg" alt="IMG_6972"></p>
+<p>下面👇是使用了h<del>LSD</del>的贪婪最佳优先搜索寻找Arad到Bucharest的路程的过程。</p>
+<p>A生成了新结点S，T，Z，即从A出发可以到达S，T，Z，而根据上面给出的表格，S到B的直线距离最近，故扩展S，下面同样的道理选择扩展F，而F生成的新结点中就有Bucharest,也就是目标结点。</p>
+<p>对于这个问题，使用了h<del>LSD</del>的贪婪最佳优先搜索在没有扩展任何不在解路径上的结点的情况下就找到了问题的解，因此我们说<strong>他的搜索代价是最小的</strong>。这就是为啥说他是贪婪的，因为每一步他都想要试图找到离目标最近的结点。然而事实上它却不是最优的。下面在贪婪最佳优先搜索的不足中具体说明。</p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6974.jpg" alt="IMG_6974"></p>
+<p><strong>👹贪婪最佳优先搜索的不足👹：</strong></p>
+<ul>
+<li><p><strong>不是最优的</strong>。比如上面的例子中(A,S,RV,P,B)实际上要比（A,S,F,B）的路径要短32公里，也就是说它贪婪到最后反而跑远了，这是因为它过度依赖h<del>LSD</del>，总是看着最短的直线距离，可事实上直线距离短的真正走的时候他的路不一定就短，导致最后反而多走了，也就是没能找到最优解。</p>
+</li>
+<li><p><strong>是不完备的</strong>。也就是它不只是像上面说的找不到最好的路，它可能到都到不了。比如它可能会沿着一条无限的路径走下去而不回来做其他的尝试，到死也找不到目标结点，比如下面的螺旋上经过无限个点才能到达Bucharest；或者再举个例子，加入在Bucharest周围有一圈儿城市，但是他们就是没往Bucharest修路，而最近的往Bucharest修路的城市C在这个城市圈的外面，哪怕城市圈理由很多路可以去C，那这个算法也一直都不会去找到外面那个城市。</p>
+<p>这两个例子大致情形如下图所示：</p>
+</li>
+</ul>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6977.jpg" alt="IMG_6977"></p>
+<p>图1中设置了无限个城市点，那么他也就有了无限状态空间，如此一来这个算法总可以找到距离B直线距离更近的城市，但是却在这条无限路径上永远到达不了B。而事实上我们完全可以从A到C再到B，甚至即使选择了D也还有路到C去再到B，但是这个算法却选不出来，因为“他觉得C离B太远了”。</p>
+<p>图二中设置了环形城市圈，当他由D到E进入城市圈了之后，如果按照树搜索的方式，那她最后会在城市圈儿里陷入死循环；而即使按照图搜索的方式在圈上走，走过的我们就不再走了，那最后当他把所有城市都走过一遍，边缘集里没有待扩展的结点了，那也就没法再往下走了，只能以failure告终。而事实上，不管是从A到C再到B，还是从圈上的E，F，G，H到C再到B都可能得到这个问题的解，可按照这个算法最后就是找不到解(图搜索也有另一种情况，就是假如走完一圈之后到了圈上E左边那个点，叫M，假如M有一条道C的路，那从M倒是可以扩展到C，然后是可以找到解的)。</p>
+<p>当然如果不考虑图二这种城市圈孤立点的特殊情况的话，就是正常的像罗马尼亚问题那样相互都有路径连接（即结点距离都为常数而不是无限的话）的情况的话，那<strong>图搜索版本的该算法在有限状态空间则是完备的</strong>，而<strong>树搜索（见下面一点）则是不完备的了，无限空间都是不完备的。这点结论和深度优先一样。</strong></p>
+<ul>
+<li>启发函数代价最小化这一目标会<strong>对错误的点比较敏感</strong>，比如在罗马尼亚地图中，想要从Isai到Fagaras。</li>
+</ul>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/k356.png" alt="k356"></p>
+<p>从图上来看Iasi扩展得到的结点有两个，故得到边缘集{N,V}，而Neamt到Fagaras的直线距离明显要比Vaslui到Fagaras的直线距离小得多，故贪婪最佳优先搜索算法必然会选择Neamt进行扩展，不料这里是个死胡同，N扩展会得到Iasi，那么此时边缘集就变成了{Iasi,V}，而同样可以知道论到Fagaras的直线距离，Iasi要比V更近，因此此时算法便又会选择Iasi进行扩展，而下面自然又会选择N进行扩展，如此一来便进入到了死循环中，永远找不到解。可事实上Iasi  ➡️  V  ➡️  U  ➡️  B  ➡️  Fagaras，便得到了一个解。</p>
+<p>🍎 这一点看上面的环形城市圈的例子也是一样的意思。</p>
+<ul>
+<li><strong>最坏的情况下</strong>，贪婪最佳优先搜索算法的**时间和空间复杂度都会达到O(b^m^)**。</li>
+</ul>
+<blockquote>
+<p><strong>而事实上，如果有一个好的启发函数，复杂度可以得到有效降低，下降的幅度决定于特定的问题和启发式函数的质量。</strong></p>
+</blockquote>
+<hr>
+<h3 id="2-2-A-搜索：缩小总评估代价"><a href="#2-2-A-搜索：缩小总评估代价" class="headerlink" title="2.2     A*搜索：缩小总评估代价"></a>2.2     A*搜索：缩小总评估代价</h3><h4 id="解释：-4"><a href="#解释：-4" class="headerlink" title="解释："></a>解释：</h4><p>最佳优先搜索最广为人知的形式称为A*搜索，它对结点的评估综合了g(n)与h(n)，即初始状态到达此结点已经花费的代价和从该结点到目标结点所花的代价，<strong>评估函数</strong>表示为：</p>
+<p>​                                                                f(n) = g(n) + h(n) ；</p>
+<p>即：</p>
+<p>​                                            f(n) = 经过结点n的最小代价解的估计代价 ；</p>
+<p>说白了就是估摸着的经过这个结点n的路径能达到的最小的路径代价（这里的代价指的是<strong>从开始结点到目标结点的总代价</strong>，故同时用上了g和h）。</p>
+<p>按着这样的思路，那么我们在扩展结点时的合理思路就是，既然我们想要找到代价最小的解，那就应该总是先扩展g(n) + h(n)的值最小的结点。</p>
+<blockquote>
+<p>*<em>我们将会发现这个策略它不仅仅是合理的，假设启发式函数h(n)满足特定的条件，那A</em>既是完备的，又是最优的（下面具体阐述）。**</p>
+</blockquote>
+<p>可以看出，<strong>A<em>搜索算法和一致代价搜索类似**，除了A</em>用的是g + h</strong>而不是 g** 。</p>
+<hr>
+<h4 id="保证A-最优性的条件：可采纳性（亦称可容性）和一致性（亦称单调性）"><a href="#保证A-最优性的条件：可采纳性（亦称可容性）和一致性（亦称单调性）" class="headerlink" title="保证A*最优性的条件：可采纳性（亦称可容性）和一致性（亦称单调性）"></a>保证A*最优性的条件：<u>可采纳性（亦称可容性）</u>和<u>一致性（亦称单调性）</u></h4><p>①保障最优性的第一个条件是h(n)要是一个**<u>可采纳</u>**启发式</p>
+<p>可采纳启发式是指，<strong>它从不会过高地估计到达目标的代价</strong>，也就是说我们不会把<strong>后续代价</strong>估计得<strong>比实际后续要花的代价</strong>还高，而由于g是已经当前路径到达n点的实际代价，那我们可以得出结论：</p>
+<p>​                                                <strong><u>f(n)永远也不会超过经过n的解的实际代价。</u></strong></p>
+<p>就是估的肯定比回头实际用的代价要小。</p>
+<p>可采纳性的启发式一个明显的例子就是之前讲的贪婪最佳优先搜索中的直线距离h<del>LSD</del>，两点之间直线距离最短，自然不会超出实际距离，即用直线距离去估计要跑的距离那肯定是不会高估的。</p>
+<p>可以看一下A* 搜索算法求解罗马尼亚问题的过程，过程参见「附录：罗马尼亚问题的A*解法（h(n)=h<del>LSD</del>），即书上的图 3.24」，这里主要提几点说明，</p>
+<ul>
+<li><p>每次扩展都选择边缘集中f最小的结点(即我在图里写的采取全局择优搜索)，算法就是这样定义的，这不用解释了。</p>
+</li>
+<li><p>另外就是*<em><u>**</u></em>目标检测发生在结点扩展时，而不是结点生成时*****，这点可以从步骤(e)和步骤(f)看出，在步骤(e)的时候其实Bucharest已经生成了(Bucharest(450))，即已经被放进了边缘集中，但是却没有被选中扩展，而是选了Pitesti(417)进行扩展，因为417&lt;450，算法认为可能经Pitesti能得到更低代价的路径，即更优的解，【补充说明：事实上我们在这里本来就不该将Bucharest(450)看得这么特殊拿出来专门比较，类比在一致代价搜索说的就可以知道，这里算法运行过程中我们应该只关注f值，在步骤(e)中450太大了，他根本就不可能被选中进行扩展，那自然也不会被检测，也就不可能知道它就是一个目标结点了，这里拿出来比较只是因为人眼看去一眼就看到了这是个目标结点，在这里说明比较一下只是为了便于理解，算法运行过程中417&lt;450的比较只是两个边缘集结点的f值的普通比较罢了。】这样一来便由Pitesti扩展得到了Bucharest(418)，与450相比当然是把这个估价小的放入边缘集合，这时候可以看到Bucharest(418)在边缘集所有结点中是f值最低的结点了，此时显然Bucharest(418)是更好的选择，于是目标结点在Bucharest(418)被选中扩展时检测得到。</p>
+<p>其实这样一来也能看出，*<em><u>A *和一致代价搜索确实是很像的</u> *</em>，撇去结点扩展标准，其实算法过程中的思想可以说是一样的。</p>
+</li>
+</ul>
+<p>②第二个条件略强于第一个条件，被称为*<em><u>一致性</u>**（有时候也称作单调性）,**只作用于在图搜索中使用A</em>算法**。</p>
+<ul>
+<li>假设结点n通过某个a（action）生成n的<strong>任意后继结点</strong>n^‘^,n到n^‘^的这个单步代价即为c(n,a,n‘)，那么</li>
+</ul>
+<p>所谓h(n)是一致的，即对于任意的结点n，h(n)满足：</p>
+<p>​                                                                h(n) &lt;= c(n,a,n‘) + h(n^‘^ )；</p>
+<p>也就是说对于任意一个结点n来说，</p>
+<p>【从该结点n到目标结点的估价】，总不超过，【它到任意一个后继结点的单步代价】+【这个后继结点到目标结点的估价】</p>
+<p>（这是一个一般的三角不等式，保证了三角形中任何一条边的长度不大于另外两条边之和。这里三角形是由n，n^‘^，和离n最近的目标结点G<del>n</del>构成的。）</p>
+<ul>
+<li><strong>对于可采纳的启发式，这种不等式有着明确的意义：</strong></li>
+</ul>
+<p><strong>如果从n经过</strong>n^‘^ <strong>到</strong>G<del>n</del> <strong>的代价小，就违反了h(n)的性质：h(n)是到达G<del>n</del>的下界</strong>。</p>
+<p>【</p>
+<p><strong>上面这句话这里的代价说的就是实际代价</strong>，</p>
+<p>(其实从可采纳的定义来看就是在说明h(n)是n到达G<del>n</del>的实际代价的下界)</p>
+<p>下面的话主要是要说明在可采纳性的保证下，由一致性的不等式也可以推出h(n)是n到达G<del>n</del>的实际代价的下界</p>
+<p>用一致性来看，</p>
+<p>首先由可采纳性知道h(n^‘^)是不超过n^‘^到G<del>n</del> 的实际代价的，由于c表示的是单步实际代价，那么就有</p>
+<p> h(n)   &lt;=    c(n,a,n‘) + h(n^‘^ )    &lt;=      c(n,a,n‘)       +      n^‘^到G<del>n</del> 的实际代价     =      n经 n^‘^到G<del>n</del> 的实际代价；</p>
+<p>注意哦，我们之前假设的是n的任意后继结点，所以以上的不等式即表明：</p>
+<p>h(n)    &lt;=    n通过任意路径到达G<del>n</del>的实际代价</p>
+<p>即，h(n)是n到达G<del>n</del>的下界，就是说从n出发，无论走什么路也不应该有比h(n)代价更小的了，这就是为啥说</p>
+<p><strong>如果从n经过</strong>n^‘^ <strong>到G<del>n</del> 的代价(实际代价)小，就违反了h(n)的性质：h(n)是到达G<del>n</del>的下界</strong>。</p>
+<p>】</p>
+<ul>
+<li><p><strong>一致的启发式都是可采纳的</strong></p>
+<p>虽然一致性比可采纳行更严格，按理来说应该有很多满足了可采纳性但满足不了一致性的启发式的例子，但实际上这样的例子并不好找（<strong>也就是说其实大多数情况下满足要求的启发式往往两个性质都满足了</strong>）。我们在本章探讨的可采纳的启发式也都是一致的。</p>
+<p>例如之前所说的罗马尼亚🇷🇴问题中的启发式函数h<del>LSD</del>，他估计的都是直线距离，肯定不超过实际距离，所以显然是满足可采纳性的 h(n)  &lt;=  n到G<del>n</del> 的实际代价；</p>
+<p>对于n，n‘，G<del>n</del>，如下图所示，根据三角不等式，可知有：</p>
+<pre><code>                                                          c(n,a,n‘)   +    h(n&#39; )   =   L  +   h(n&#39; )      &gt;=    h(n) ；</code></pre>
+<p>即</p>
+<p>​                                                                        h(n)    &lt;=    h(n’ )   +  c(n,a,n‘) ；</p>
+</li>
+</ul>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/4k5031.png" alt="4k5031"></p>
+<p>证明一致的一定是可采纳的：</p>
+<p>对于一个一致的启发式，即满足：</p>
+<p>h(n)   &lt;=    c(n,a,n‘) + h(n’ ) </p>
+<p>假设n距离目标结点的最短路径有若干个结点，n’在最短路径上，</p>
+<p>当有1个结点，即n’ 是目标结点，则h(n’ ) =0，</p>
+<p>有：h(n)   &lt;=    c(n,a,n‘) ，即h(n)不超过n到目标结点的实际代价，h(n)是可采纳的。</p>
+<p>现在假设在n到目标结点的最短路径上n‘距离目标结点有k个结点时，h(n)是可采纳的，则</p>
+<p>h(n)   &lt;=    c(n,a,n‘) + h(n’ ) &lt;=c(n,a,n‘) + h*(n’ )=h*(n)</p>
+<p>即当结点距离目标k+1个结点时，h(n)也是可采纳的。</p>
+<h4 id="A-算法的最优性"><a href="#A-算法的最优性" class="headerlink" title="A*算法的最优性"></a>A*算法的最优性</h4><ul>
+<li><p>A*算法有如下性质：</p>
+<p>如果h(n)是可采纳的，那么树搜索A*算法是最优的；</p>
+<p>如果h(n)是一致的，    那么图搜索A*算法是最优的。</p>
+</li>
+</ul>
+<p>后半部分对我们更加有用。</p>
+<p>h1：8扩展，找到不在位置最小的状态，</p>
+<h1 id="🧠局部搜索算法和最优化问题"><a href="#🧠局部搜索算法和最优化问题" class="headerlink" title="🧠局部搜索算法和最优化问题"></a>🧠局部搜索算法和最优化问题</h1><h4 id="局部搜索算法概述"><a href="#局部搜索算法概述" class="headerlink" title="局部搜索算法概述"></a><strong>局部搜索算法概述</strong></h4><ul>
+<li><p>一般的搜索算法都会系统地探索空间，这种系统化的方法在内存里面保留一条或者多条路径和路径中的每个结点，当我们找到目标之后，到达次目标的路径就是这个问题的一个解。</p>
+<p>But，很多问题里面，到达目标的路径是不相关的，比如把皇后问题中，重要的是最终皇后在棋局上的布局，而不是皇后加入的先后次序。</p>
+<p>这种问题很多，比如集成电路设计，工厂工地布局，作业车间调度，自动程序设计，电信网络优化，车辆寻径和文件夹管理。</p>
+</li>
+<li><p>说白了，这类问题到目标的路径是无关紧要的，如此我们的想法就是考虑一些可以不关心路径的算法。</p>
+<p><strong>局部搜索</strong>算法，从单个当前结点出发（而不是多条路径），通常只移动到它的邻近状态，一般情况下不保留搜索路径。</p>
+<p>虽说局部搜索算法不是系统化的，但是有两个关键的优点：</p>
+<p>1、<strong>只用很少的内存</strong>——通常是<strong>常数</strong></p>
+<p>2、经常能在系统化算法不适用的<strong>很大的或是无限的(连续的)状态空间</strong>中找到合理的解。</p>
+</li>
+<li><p>除了找到目标上的优点，局部搜索的目标是根据目标函数找到 最佳状态，这对于解决纯粹的**<u>最优化问题</u> **十分有用。</p>
+</li>
+<li><p>一般的<strong>经典的搜索算法那种标准的搜索模型</strong>不适用于很多最优化问题。</p>
+<p>比如说进化问题，达尔文的进化论可以被视为对最优化的尝试，自然界给我们提供了“繁殖适应性”这个目标函数，但是这个问题本身没有目标测试（啥样算是具体的目标点呢？没有）和路径代价，所以没法蒙头往下找目标。</p>
+</li>
+<li><p>局部搜索中常用到<strong>状态空间地形图</strong>，坐标系的坐标-标高为：<strong>状态</strong>-<strong>启发式代价函数/目标函数</strong></p>
+<p>若标高对应于代价函数，那自然代价越小越好，因此目标就是找到最低谷——<strong>全局最小值</strong></p>
+<p>若标高对应于目标函数，那么一般定义目标值越高越好，因此目标是找到最高峰——<strong>全局最大值</strong></p>
+<p>（方便起见，这俩值可以通过插入一个负号是两者转换）</p>
+<p>如此，若有解，</p>
+<p>那么完备的局部搜索算法总能找到解，</p>
+<p>最优的局部搜索算法总能找到全局最小值/最大值。</p>
+</li>
+</ul>
+<h4 id="爬山法（最陡上升版本）-贪婪局部搜索"><a href="#爬山法（最陡上升版本）-贪婪局部搜索" class="headerlink" title="爬山法（最陡上升版本）/贪婪局部搜索"></a><strong>爬山法（最陡上升版本）/贪婪局部搜索</strong></h4><ul>
+<li><p>他只是简单的循环过程，就是不断向值增加(以目标函数作标高)的方向持续移动，即登高。</p>
+<p>算法在到达一个“峰顶”，看到邻接状态中没有比它更高的就终止，⚠️注意哦，这里说的“峰顶“并不是全局最大值，而是某个**<u>局部极大值</u>**，这也是爬山法的一个问题所在，后面说。</p>
+<p>即算法过程：loop{比较，爬高}➡️某个时刻发现邻居都比自己差，说明自己已经是局部最大值了，即局部最优，那爬山法🧗‍♂️就不继续找了，返回局部最优值。</p>
+</li>
+<li><p>算法不维护搜索树，因此当前结点的数据结构只需要记录当前状态和目标函数值。</p>
+<p>爬山法也不会去考虑与当前状态不相邻的状态（就只和相邻状态比嘛，比如八皇后问题中就是指移动某一个皇后之后的棋盘状态。）</p>
+<p>这样的过程用书上的话来说就是个“健忘症试图登顶珠穆朗玛峰”。⚠️这也是爬山法的一个问题，比如高原问题，后面说。</p>
+</li>
+<li><p>局部搜索算法一般使用<strong>完整状态形式化</strong>，拿八皇后来说意思就是每个状态都包含了在棋盘上放置八个皇后（每列一个）。</p>
+<p><strong>后继函数</strong>指的是移动某个皇后到这列的另一个可能的方格中，由此得到一个后继状态，因此每个状态有(8x7=56个后继)</p>
+<p><strong>启发式评估函数</strong>h是形成互相攻击的皇后对的数量，不管是直接还是间接。该函数的全局最小值是0，仅在找到解时才会是这个值。</p>
+</li>
+<li><p>对于爬山法来说，假如有<strong>多个</strong>后继都是当前最大值(以目标函数看)/最小值(以代价函数来看)，那么爬山法会在这些<strong>最佳后继</strong>和集中中<strong>随机选择一个</strong>。</p>
+</li>
+<li><p>爬山法有时候被称为贪婪局部搜索，因为它永远只是选择邻居状态中最好的一个，而不继续考虑下一步该怎么走。不过状态好的话，那图的就是贪婪算法的快嘛。</p>
+</li>
+<li><p>🧠来说一下爬山算法的弊端：</p>
+<p>**<u>1、局部极大值</u>**，</p>
+<p>前面提到过了这是啥意思，这种问题带来的就是爬山法常常只能找到我们找到的这个局部极大值可能远远小于全局最大值，也就是只到了珠穆朗玛峰旁边的一个小土包上，但是因为往旁边动都会让自己先往下走才行，爬山法不愿意这么做，所以一般做法是他发现自己已经爬到了一个“山顶⛰️”了，算法就结束了，就返回这个局部极大值。</p>
+<p><strong><u>2、山脊</u></strong></p>
+<p>这种情况就是会有一些列的局部极大值，爬山这样的贪婪算法难以处理。</p>
+<p><strong><u>3、高原</u></strong></p>
+<p>就是指状态空间地图上的一个单独的平台，或者是山肩。</p>
+<p>山肩还有可能取得进展，但是单独的平台就会让算法“迷路”了。</p>
+<p>解释一下：</p>
+<p>本来想着可以和后继比较的时候若当前状态=后继也就停下了，可是这样的话我们就只能放弃山肩的可能了。本着我们是来解决问题的精神，所以当目前=后继的时候还是继续探索（即<strong>侧向移动</strong>，这是相对于上山下山而言的叫法），所以这就带来在单独的平台上会来回反复移动，也就是所谓的“迷路”了，因为爬山者是个健忘症患者，也不记得之前走过的路，所以马上还会再走回去，这才给整迷路了。</p>
+<p>但是上面的允许侧向移动的方法也不能一直让他跑来跑去，不然会在平台上<strong>迷路</strong>——即<strong>算法死循环</strong>。</p>
+<p>一般可以设置<strong>允许连续侧向移动的次数限制</strong>。事实证明这样可以让成功率大幅提升，不过这样的<strong>代价</strong>就是我们完成任务的平均步数可能也就大大增多了。</p>
+</li>
+<li><p>爬山算法的变形：</p>
+<h5 id="随机爬山法"><a href="#随机爬山法" class="headerlink" title="随机爬山法"></a><strong>随机爬山法</strong></h5><p>它在上山移动中随机地选择下一步，被选中的概率可能随着上山移动的陡峭程度不同而不同。</p>
+<p>这样随机的方式可想而知比最陡爬山法收敛速度慢不少，但是在某些状态空间地形图上它能找到更好的解，随机嘛，万一碰到最大值了呢。😌</p>
+<h5 id="首选爬山法"><a href="#首选爬山法" class="headerlink" title="首选爬山法"></a><strong>首选爬山法</strong></h5><p>首选爬山法也是一种随机爬山法，也随机，只是他一直生成到生成一个优于当前结点的后继才拿这个作为后继，这个算法在后继结点很多的时候是个好策略。</p>
+<h5 id="随机重启爬山法"><a href="#随机重启爬山法" class="headerlink" title="随机重启爬山法"></a><strong>随机重启爬山法</strong></h5><p>要知道前面说的这些方法还是跟直接后继打交道，都不能保证可以找到解，即**<u><em>不完备</em></u>**！那更不用说最优了。</p>
+<p>因为即使随机他们也可能是在某一区域反复横条，出不去。</p>
+<p>而随机重启爬山法则不只是跟直接后继打交道了，他一开始也是正常爬高，然后陷入局部困境（比如没有完成符合条件的八皇后状态），这时候便会重启（重新开始搜索）：即随机生成一个状态作为初始状态再从这个状态开始爬山，直到找到目标。</p>
+<p>它<strong>完备的概率接近于1</strong>。按书上的说法，他最终会生成一个目标状态作为初始状态。但是这也不一定吧，要不咋说是“完备概率接近于1呢。”</p>
+<p>假设一次爬山来说，一次爬成功的概率是p，那么需要爬山的次数为1/p。</p>
+<p>如此，一次完整的任务所需步数的期望为：</p>
+<p>step(success)+[(1-p)/p]·step(failure)</p>
+<p>比如对于不允许侧向移动的八皇后问题：</p>
+<p>已知：</p>
+<p>每次爬山中成功的概率p约等于0.14，那么需要迭代的次数为1/p=7，即6次失败和1次成功；</p>
+<p>成功找到解的平均步数是4步，被卡住的平均步数是3步（就是开始之后走三步被卡住）；</p>
+<p>所需步数则为：</p>
+<p>4+[(1-0.14)/0.14]·3=4+6*3=22</p>
+<p>对于允许侧向移动的八皇后问题：</p>
+<p>已知：</p>
+<p>每次爬山中成功的概率p约等于0.94，那么需要迭代的次数为1/p=1.06，；</p>
+<p>成功找到解的平均步数是21步，被卡住的平均步数是64步（就是开始之后走三步被卡住）；</p>
+<p>所需步数则为：</p>
+<p>21+[(1-0.94)/0.94]·64=21+64/16=25步</p>
+<ul>
+<li>随机重启爬山法实际上还是挺有效的，即使有300万个皇后，这法子找到解的时间也不超过1分钟。</li>
+<li>从以上所有的分析来看（包括重启），爬山法的成功与否严重依赖于状态空间地形图的形状，假如几乎没有局部极大或者高原，那可能很好找到解。</li>
+</ul>
+</li>
+</ul>
+<h4 id="模拟退火搜索"><a href="#模拟退火搜索" class="headerlink" title="模拟退火搜索"></a><strong>模拟退火搜索</strong></h4><ul>
+<li>爬山法由于不会下山，会卡在局部极大值上，所以不完备。</li>
+</ul>
+<p>反之存粹的随机（一直等概率的随机选择后继），是完备的，但可想而知效率极低。</p>
+<ul>
+<li><p>模拟退火算法，就是考虑到把爬山算法和随机行走以某种方式结合，同时得到效率和完备性的算法。</p>
+</li>
+<li><p>模拟退火的内层循环与爬山法类似，不过不是选择最佳移动(最佳后继)，而是选择随机移动，如果该移动使得情况改善，则该移动被接受。（这里的描述和首选爬山法差不多，后面便不一样了。）</p>
+<p>否则，算法以某个小雨1的概率接受该移动。并且如果移动导致状态变坏（即对状态的评估值$\Delta$E变坏），则概率成指数级下降。这个概率也会随着温度T的降低而下降：开始的时候T很高，可能允许“坏的”移动，T越低则越不待见这种坏东西（方法就是接受的概率降低嘛）。</p>
+<p>如果调度让T下降得足够慢，那算法找到全局最优解的概率逼近于1。</p>
+<p>解释一下概念：</p>
+<p>T=schedule(t)，即有一个调度表，T随着时间越来越小</p>
+<p>$\Delta$E = next.value - current.value，即用待选后继状态值 - 目前状态值</p>
+<p>如果$\Delta$E&gt;0，那么显然我们直接接受这个后继即可</p>
+<p>否则，只以概率e^($\Delta$/T) 接受这个后继。</p>
+<p>来看$\Delta$E/T，当状态变好了，我们不会接触到这个概率，</p>
+<p>而当状态变差时，那么$\Delta$E&lt;0，而因为调度一直在进行，这时候的温度T和之前相比也下降了，</p>
+<p>所以$\Delta$E/T降低了，故概率是e^($\Delta$/T)在呈指数级下降。</p>
+<p>由此结合整个过程来看，开始温度较高时，我们可以“疯狂接受”差的移动，而随着温度降低的降低我们越来越不会接受差的移动，想的极端一点到最后我们只以无穷小的概率接受差的移动，也就是我们基本只会接受好的移动，（但也不是完全不接受差的移动，如果完全不接受那旁边要是没有好的，就又陷入困境了），因此我们“终有一天”（不过这就是效率比较低的情况了）可以得到一个可行的解。</p>
+<p>不过假如温度降的太快了，也就是我们很快就（几乎）不允许下山了，那我们就很难去往那坐最优山上去了，也就很难找到最优解了，所以办法就是让温度降的慢一点，也就是允许试错的概率大一点，那么我们还可以接着不断下山去往另一座山，以期待找到最优解，书上说温度下降足够慢，找到最优解的概率逼近于1。</p>
+</li>
+</ul>
+<p>⚠️想到一个问题，局部搜索里面不考虑路径问题，对于八皇后这样的问提，它似乎不存在次优解啊，只有严格符合条件才算是找到了解，所谓的次优状态（目标函数局部极大值）也只是表示当前能调整到的最好的状态，但这种状态不算是一个解啊。那用模拟退火做的时候和其他问题相比这类问题的成功率是不是还是比较低呢？</p>
+<h4 id="局部束搜索"><a href="#局部束搜索" class="headerlink" title="局部束搜索"></a><strong>局部束搜索</strong></h4><ul>
+<li><p>内存是有限的，但是内存中只保留1个结点又有些极端。</p>
+<p>局部束搜索算法记录k个状态而不是1个状态。</p>
+<p>他从k个随机生成的状态开始。每一步全部k个状态的所有后继都被生成。若其中有一个是目标状态，则算法停止。否则从它整个后继列表中选择<strong>k个最佳的后继</strong>，重复这个过程。</p>
+</li>
+<li><p>在局部束搜索中，有用的信息在并行的搜索线程之间传递，算法会很快放弃没有成果的搜索而把资源都用在取得重大进展的路径上。</p>
+</li>
+<li><p>如果是最简单的局部束搜索，那么这k个状态由于缺乏多样性，他们很快会聚集到状态空间中的一小块区域，是的搜索代价比高昂的爬山法版本还要多。</p>
+<p>因此有了随机束搜索，它随机选择k个后继状态，其中选择给定后继状态的概率是状态值的递增函数，就是说当前状态越好的，他的后继被选中的概率越大，即适者生存。</p>
+<h4 id="遗传算法"><a href="#遗传算法" class="headerlink" title="遗传算法"></a><strong>遗传算法</strong></h4></li>
+<li><p>遗传算法是随机束搜索的一个变形，并且也是从<strong>k个随机生成的状态</strong>开始，不过他通过把两个父状态结合来生成后继，而不是通过修改单一状态进行。</p>
+</li>
+<li><p>k个随机生成的状态——种群，</p>
+<p>每个状态——个体，用一个有限长度的字符串表示，通常是0、1串。</p>
+</li>
+<li><p>如果说遗传算法有啥优点的话，那就来自于杂交了，</p>
+<p><strong>杂交的优势来源于它能够将独立发展出来的能够执行有用功能的字符串区域结合起来，因此提高了搜索的粒度。</strong></p>
+</li>
+<li><p>遗传算法用了“模式”的思想来解释运转过程，可以证明，如果某个模式的实例的平均适应度超过均值，那么种群内这个模式的实例数量会随着时间增长。</p>
+<p>那么，如果临近位互不相关，效果就没有这么显著，因为只有很少的邻接区域能受益。</p>
+<p>遗传算法只有在<strong>模式具备真正与解相对应的成分时才工作得最好</strong>。</p>
+</li>
+</ul>
+<h1 id="🧠对抗搜索-博弈"><a href="#🧠对抗搜索-博弈" class="headerlink" title="🧠对抗搜索-博弈"></a>🧠对抗搜索-博弈</h1><h4 id="博弈"><a href="#博弈" class="headerlink" title="博弈"></a><strong>博弈</strong></h4><ul>
+<li><p>竞争环境中，每个Agent的目标之间是有冲突的，即引出对抗搜索问题——通常称为博弈</p>
+</li>
+<li><p>人工智能中的博弈:有完整信息的、确定性的、轮流行动的、两个游戏者的零和游戏</p>
+<p>游戏结束时，效用值总是相等且符号相反</p>
+<p>当然后面有多玩家的博弈，则规定放宽了</p>
+</li>
+<li><p>博弈中Agent的行动数目通常受限，行动的输出都有严谨的规则来定义</p>
+</li>
+<li><p>就像人类的下棋，博弈问题要求在无法计算出最优决策的情况下也要给出某种决策，</p>
+<p>并且对于低效率有严厉的惩罚</p>
+<p>如，其他条件相同的情况下，只有一般效率的A*算法意味着两倍的运行时间，于是只能以一半的效率利用可用时间的国际象棋程序就可能被击败，</p>
+<p>因此博弈会去研究如何尽可能地利用好时间的问题。</p>
+</li>
+<li><p>博弈中会用到剪枝，<strong>使得在搜索树中忽略那些不影响最后决定的部分</strong></p>
+<p>也会用到启发式的评估函数，使得在不进行完全搜索的情况下估计某个状态的真实<strong>效用值</strong>。</p>
+</li>
+<li><p>效用函数(目标函数/收益函数)，定义游戏者p在终止状态下的数值。(如白子胜:1，黑子胜:-1，和:0)</p>
+<p>零和博弈中，所有的棋手总收益都是一样的，如国际象棋中棋局收益有:0+1，1+0，1/2+1/2，总收益都为1</p>
+<p>这也可以称作常量和，不过零和是更传统的说法。</p>
+</li>
+</ul>
+<h4 id="MINIMAX算法"><a href="#MINIMAX算法" class="headerlink" title="MINIMAX算法"></a><strong>MINIMAX算法</strong></h4><ul>
+<li>博弈树的深度的定义:</li>
+</ul>
+<p>在双方各走一步后，这可博弈树目前的深度是一步，包括了两个单方招数，每个单方招数称为一层</p>
+<p>在课后题目中让画出某个游戏的两层博弈树则是指的两人各下一步的为止所呈现的局面</p>
+<ul>
+<li><p>当前博弈中的最优决策可以通过检查每个结点的极小极大值来觉得，</p>
+<p>对某个节点s，其极小极大值表示为MINIMAX(s)</p>
+<p>s为终止状态，取终止状态效用值;</p>
+<p>s为MAX结点，取直接后继的最大值(MAX结点即，当前为玩家MAX选择该怎么走)</p>
+<p>s为MIN结点，取直接后继的最小值</p>
+<p>可以看出，除了终止结点层以外每一层都接受来自后继的<strong>回传值</strong>，</p>
+<p>由此可以得知在跟结点的极小极大决策:对于MAX结点来说的最优选择即是，指向有最高的极小极大值的动作。</p>
+</li>
+<li><p>在MINIMAX算法中在对MAX的最佳行棋进行求解时，做了MIN也按照最佳行棋的假设，即尽可能最大化MAX的最坏情况。</p>
+<p>那么加入MIN不按最佳行棋呢?按照常理也可以想到，这种情况下MAX可以做的更好。</p>
+<p>试想如果双方都按照最优招行棋MAX用minimax赢了，即MAX的效用值&gt;MIN，</p>
+<p>那么MAX用minimax去对付次优招行棋的min，其效用值不会比对付最优招MIN时的效用值低，</p>
+<p>也就是说MAX照样能赢，且做的更好。</p>
+<p>某些策略在对付非最优化对手方面做得比极小极大策略好，但是拿它来对付最优化对手时则会得到更差的结果。</p>
+</li>
+<li><p>极小极大算法对博弈树执行完整的<strong>深度优先搜索</strong>，</p>
+<p>加入树的最大深度为m(正常的树深度)，每个结点合法的行棋方式有b个，则复杂度O(b^m)</p>
+<p>一次性生成所有后继的算法，空间O(bm)</p>
+<p>每次生成一个后继的算法空间复杂度O(m)</p>
+</li>
+</ul>
+<h4 id="多人博弈"><a href="#多人博弈" class="headerlink" title="多人博弈"></a><strong>多人博弈</strong></h4><ul>
+<li><p>决策方式与双人博弈类似，只不过某个结点的效用值用向量表示，</p>
+<p>如三人博弈，某个结点表示为&lt;va，vb，vc&gt;，va，vab，vc即为从A、B、C角度出发看到的效用值</p>
+<p>如此，每次在做决策时，回传的都是后继中让自己的效用值最大的结点的效用值向量</p>
+</li>
+<li><p>假如游戏是非零和的，比如去摘苹果，A和B都觉得自己摘满一百个就够了，那么他们可能会可做让自己达到这种状态</p>
+</li>
+<li><p>而另一种想法，则是一个ABC的游戏，C太过强大，于是A和B可以通过合作来打压他，</p>
+<p>比如A和B在选择行动时，优先选择的不是让自己的效用值最大的行动方案而是让C的效用值更小的那一个方案。</p>
+</li>
+</ul>
+<h4 id="alpha-beta-剪枝"><a href="#alpha-beta-剪枝" class="headerlink" title="$\alpha$ -$\beta$剪枝"></a><strong>$\alpha$ -$\beta$剪枝</strong></h4><ul>
+<li><p>极小极大值搜索存在的问题:</p>
+<p>我们需要检查的状态数目会随着博弈的进行呈现指数级增长，</p>
+<p>不幸的是，这种指数增长无法消除，因此我们想办法将其减半</p>
+<p>也就是我们不需要遍历博弈树中每一个结点就可以计算出正确的极小极大值</p>
+<p>这种技术称为$\alpha$- $\beta$剪枝。</p>
+</li>
+<li><p>$\alpha$- $\beta$剪枝可以应用于任何深度的树，很多情况下可以减掉整个子树，而不仅仅是剪掉叶结点。</p>
+</li>
+<li><p>做一下习题5。9，和图5。5对比一下可以很明显知道，$\alpha$- $\beta$剪枝剪枝的效率很大程度上依赖于检查后继状态的顺序，这对决策很不利，可能在我们没算完最佳决策的时候就没时间了，那将给不出一个好的决策。</p>
+</li>
+</ul>
+<h4 id="对博弈算法的优化"><a href="#对博弈算法的优化" class="headerlink" title="对博弈算法的优化"></a><strong>对博弈算法的优化</strong></h4><ul>
+<li><p>一个关键方法——尽早地截断搜索</p>
+<p>就是说我不再去搜完整棵博弈树，而是选择在某一层阶段就算阶段层为止的最优决策</p>
+<p>那么需要做的事有:</p>
+<p>​    1、采用棋局效用值的启发式评估函数EVAL(s)取代效用函数</p>
+<p>​    2、用“决策什么时候启用EVAL”的截断测试取代终止测试</p>
+<p><strong>因此我们需要解决的问题就是:    考虑该截到哪儿?**以及，</strong>怎么设计合理的EVAL(s)函数?**</p>
+</li>
+<li><p>设计评估函数的原则: 得能合理地估计出终止状态的情况，具体来说:</p>
+<p>1、评估函数对终止状态的排序应当和真正的效用函数的排序一样，即:</p>
+<p>​        赢状态的评估值一定要好于平局;而平局的评估值要好于输的状态。否则评估出来就是瞎扯。</p>
+<p>2、评估函数本身的计算不能花费太长时间，这是当然的，不能喧宾夺主嘛，主要的工作还是在搜索上。</p>
+<p>3、对于非终止状态，评估函数应当和取胜的几率密切相关</p>
+</li>
+<li><p>下面来说截断搜索的问题</p>
+<p>知道了到底该在哪里截断才能去吧EVAL(s)启用啊。</p>
+<p>设置截断的方法:</p>
+<p>1、<strong>设置固定深度</strong>。</p>
+<p>根据游戏规则限定的时间和机器的性能可以判断这么长时间里大概可以搜多少层，找一个合适的值，那么每次就固定搜这么多层。</p>
+<p>2、<strong>迭代深入</strong>，这是更好的方法。</p>
+<p>优点是假如时间用光了，那就返回目前完成的最深的完整搜索所采用的招数。</p>
+</li>
+</ul>
+<p>🧠:然而，由于评估函数是我们的近似估计，所以这样的方法可能会出问题。</p>
+<p>比如到我截断的深度为止，我找出了现在可以下的最好的一手，然后后一步可能就是显而易见的对手会把我的子吃掉的一步，但是因为采用了截断，我们没法推演到这一步，而这一步可能会把局势完全地逆转过来，可我们却无法预料。</p>
+<p>这是因为截断之后，启发函数自然是看当前范围内招数对棋局的影响，我们无法再向前看一步。</p>
+<p>显然我们不能这样草草截断，而<strong>需要更复杂的截断测试</strong>。</p>
+<p>评估函数只适用于那些静态棋局，即评估值不会很快出现大的波动的棋局</p>
+<p>非静态棋局可以进一步扩展变为静态棋局，所需要做的额外的搜索称为静态搜索，有时候他只考虑某些类型的棋招，以快速消解棋局的不确定性</p>
+<p>另外还有一个问题就是，<strong>地平线效应</strong>，更难消除。这是指对手的一招将导致我放某个损失从理论上将无法避免(比如不管怎么走黑棋的象还是会被吃掉，只是迟早的问题)。而在有限深度内，黑棋却无发推演到这种结果，因此为了避免象被吃掉它还是会做行动来“避免被吃”，可实际上这是避免不了的，只是“超出了黑方所能看到的地平线”罢了。这就是固定深度(截断)的搜索的弊端，他相信这些延缓的招数能够解决问题，而实际上只是将那个“必然的一步”给“推出了地平线”，将其推进了“无法检测到的空间”。</p>
+<p>避免地平线效应的一种策略是<strong>单步延伸</strong>，单步延伸至的事在给定棋局中一种棋招要明显好于其他棋招。一旦在搜索的某处发现单步延伸，牢记它。当达到指定深度界限时，算法会检查单步延伸是否合法，如果是，算法允许考虑此招。这样做可能会超出深度限制，但由于单步延伸很少，因此不会增加太多开销。</p>
+<h4 id="随机博弈"><a href="#随机博弈" class="headerlink" title="随机博弈"></a>随机博弈</h4><p>比如有骰子的双陆棋</p>
+<p>这样博弈树中除了有MIN,MAX结点,还会有机会结点,这样的棋局没有明确的极小极大值,智能计算棋局的期望值:机会结点所有可能结果的平均值.</p>
+<p>随即博弈中,和极小极大值一样,期望极小极大值的近似估计可以通过在某结点截断搜索并对每个叶结点计算其评估函数来进行.</p>
+<p>而机会结点的存在,意味着我们更应该去考虑评估函数的函数,评估值去的范围不一样决策可能会完全不一样.</p>
+<p>为了避免这种敏感性,评估函数应该与棋局获胜概率(更一般的说是棋局的期望效用值)成正线性变换.</p>
+<p>时间O(b^m^· n^m^)，m,b,n:深度，分枝因子，骰子结果数目（如6种）。</p>
+<p>在大多数机会博弈中由于额外代价(概率带来的)的存在,是的向前考虑地很远是不现实的</p>
+<h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><h4 id="1-罗马尼亚地图"><a href="#1-罗马尼亚地图" class="headerlink" title="1.罗马尼亚地图"></a>1.罗马尼亚地图</h4><p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/map.png" alt="IMG_6953"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6953.jpg" alt="IMG_6953"></p>
+<h4 id="2-罗马尼亚问题的A-解法（h-n-hLSD）"><a href="#2-罗马尼亚问题的A-解法（h-n-hLSD）" class="headerlink" title="2. 罗马尼亚问题的A*解法（h(n)=hLSD）"></a>2. 罗马尼亚问题的A*解法（h(n)=h<del>LSD</del>）</h4><p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6978.jpg" alt="IMG_6978"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/69782.jpg" alt="69782"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/IMG_6979.jpg" alt="IMG_6979"></p>
+<p><img src= "/img/loading.gif" data-lazy-src="/2020/10/30/aima/69792.jpg" alt="69792"></p>
+</div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/aima/">aima</a><a class="post-meta__tags" href="/tags/%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95/">搜索算法</a></div><div class="post_share"><div class="social-share" data-image="/2020/10/30/aima/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2020/08/22/%E7%94%B5%E5%BD%B1-%E3%80%8A%E4%B8%BA%E5%A5%B4%E5%8D%81%E4%BA%8C%E5%B9%B4%E3%80%8B/"><img class="next-cover" data-lazy-src="http://heishenhua.com/img/Wallpaper/Wallpaper8.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">电影-《为奴十二年》</div></div></a></div></nav></article></main><footer id="footer" style="background-image: url(/2020/10/30/aima/top_img.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2020 By 江城子</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Thanks for visiting my <a target="_blank" rel="noopener" href="https://sosactwt.github.io/">page</a>!</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font_plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font_minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script>var endLoading = function () {
+  document.body.style.overflow = 'auto';
+  document.getElementById('loading-box').classList.add("loaded")
+}
+window.addEventListener('load',endLoading)</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  var script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css"><script>$(function () {
+  $('span.katex-display').wrap('<div class="katex-wrap"></div>')
+})</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
